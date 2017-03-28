@@ -37,18 +37,26 @@ public class ConstantFolder
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void optimize()
 	{
 		ClassGen cgen = new ClassGen(original);
 		ConstantPoolGen cpgen = cgen.getConstantPool();
 
 		// Implement your optimization here
-        
+
+		
+
+
+
+
+
+
+
 		this.optimized = gen.getJavaClass();
 	}
 
-	
+
 	public void write(String optimisedFilePath)
 	{
 		this.optimize();
