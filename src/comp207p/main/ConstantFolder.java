@@ -11,11 +11,17 @@ import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.ClassGen;
 import org.apache.bcel.generic.ConstantPoolGen;
+import org.apache.bcel.generic.ICONST;
 import org.apache.bcel.generic.InstructionHandle;
 import org.apache.bcel.generic.InstructionList;
 import org.apache.bcel.util.InstructionFinder;
 import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.generic.TargetLostException;
+import org.apache.bcel.classfile.Constant;
+import org.apache.bcel.classfile.ConstantPool;
+import org.apache.bcel.classfile.ConstantString;
+import org.apache.bcel.classfile.ConstantUtf8;
+import org.apache.bcel.generic.LDC;
 
 
 
@@ -38,22 +44,75 @@ public class ConstantFolder
 		}
 	}
 
+	// we rewrite integer constants with 5 :)
+	private void optimizeMethod(ClassGen cgen, ConstantPoolGen cpgen, Method method)
+	{
+		// Get the Code of the method, which is a collection of bytecode instructions
+		Code methodCode = method.getCode();
+
+		// Now get the actualy bytecode data in byte array,
+		// and use it to initialise an InstructionList
+		InstructionList instList = new InstructionList(methodCode.getCode());
+
+		// Initialise a method generator with the original method as the baseline
+		MethodGen methodGen = new MethodGen(method.getAccessFlags(), method.getReturnType(), method.getArgumentTypes(), null, method.getName(), cgen.getClassName(), instList, cpgen);
+
+		// InstructionHandle is a wrapper for actual Instructions
+		for (InstructionHandle handle : instList.getInstructionHandles())
+		{
+			System.out.println(handle);
+			if(handle.getInstruction() instanceof LDC)
+			{
+				System.out.println("LDC");
+				// instList.insert(handle, new LDC(5));
+				try{
+					instList.delete(handle);
+				}catch(TargetLostException e)
+				{
+					e.printStackTrace();
+				}
+
+			}
+		}
+		instList.setPositions(true);
+
+		// set max stack/local
+		methodGen.setMaxStack();
+		methodGen.setMaxLocals();
+
+		// generate the new method with replaced iconst
+		Method nMethod = methodGen.getMethod();
+		// replace the method in the original class
+		cgen.replaceMethod(method, nMethod);
+
+	}
+
 	public void optimize()
 	{
 		ClassGen cgen = new ClassGen(original);
 		ConstantPoolGen cpgen = cgen.getConstantPool();
 
-		// Implement your optimization here
-
-		
 
 
+		// Do your optimization here
+		Method[] methods = cgen.getMethods();
+		for (Method m : methods)
+		{
+			optimizeMethod(cgen,cpgen,m);
+
+		}
+
+		// we generate a new class with modifications
+		// and store it in a member variable
 
 
 
 
 
-		this.optimized = gen.getJavaClass();
+
+
+
+		this.optimized = cgen.getJavaClass();
 	}
 
 
