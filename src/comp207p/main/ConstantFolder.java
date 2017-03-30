@@ -49,6 +49,8 @@ public class ConstantFolder
 	// we rewrite integer constants with 5 :)
 	private void optimizeMethod(ClassGen cgen, ConstantPoolGen cpgen, Method method)
 	{
+		int temp1 = 0;
+		int temp2 = 0;
 		// Get the Code of the method, which is a collection of bytecode instructions
 		Code methodCode = method.getCode();
 
@@ -62,6 +64,25 @@ public class ConstantFolder
 		// InstructionHandle is a wrapper for actual Instructions
 		for (InstructionHandle handle : instList.getInstructionHandles())
 		{
+
+			// System.out.println(handle);
+			if(handle.getInstruction() instanceof LDC)
+			{
+				LDC l = (LDC) handle.getInstruction();
+
+				System.out.println("LDC");
+				System.out.println(l.getValue(cpgen));
+				if(temp1 != 0) {
+					temp2 = (int)l.getValue(cpgen);
+					cpgen.addInteger(temp1+temp2);
+					instList.insert(handle, new LDC(cpgen.getSize()-1));
+				}
+				else {
+					temp1 = (int)l.getValue(cpgen);
+				}
+
+				System.out.println(handle);
+
 			System.out.println(handle);
 			System.out.println("class name"+ handle.getInstruction().getClass());
 			// if(handle.getInstruction() instanceof LDC)
@@ -117,7 +138,7 @@ public class ConstantFolder
 		{
 			InstructionHandle handle = handles[i];
 			System.out.println(handle);
-			System.out.println(handle.getInstruction()); 
+			System.out.println(handle.getInstruction());
 			if(handle.getInstruction() instanceof IADD)
 			{
 				System.out.println("IADD");
@@ -144,6 +165,14 @@ public class ConstantFolder
 				try{
 					instList.delete(handle );
 				}catch(TargetLostException e){
+					e.printStackTrace();
+				}
+			}
+			else if(handle.getInstruction() instanceof IADD) {
+				try{
+					instList.delete(handle);
+				}catch(TargetLostException e)
+				{
 					e.printStackTrace();
 				}
 			}
