@@ -1,102 +1,142 @@
 Testsuite: comp207p.target.ConstantVariableFoldingTest
 Tests run: 4, Failures: 0, Errors: 4, Skipped: 0, Time elapsed: 0.017 sec
 
-Testcase: testMethodThree took 0.001 sec
+Testcase: testMethodThree took 0.002 sec
 	Caused an ERROR
-Expecting a stackmap frame at branch target 16
+Operand stack underflow
 Exception Details:
   Location:
-    comp207p/target/ConstantVariableFolding.methodThree()Z @9: if_icmple
+    comp207p/target/ConstantVariableFolding.methodThree()Z @4: istore_2
   Reason:
-    Expected stackmap frame at this location.
+    Attempt to pop empty stack.
+  Current Frame:
+    bci: @4
+    flags: { }
+    locals: { 'comp207p/target/ConstantVariableFolding', integer }
+    stack: { }
   Bytecode:
-    0x0000000: 1130 393c 1204 3d1b 1ca4 0007 04a7 0004
-    0x0000010: 03ac                                   
+    0x0000000: 1130 393c 3d1b 1ca4 0007 04a7 0004 03ac
+    0x0000010:                                        
 
-java.lang.VerifyError: Expecting a stackmap frame at branch target 16
+java.lang.VerifyError: Operand stack underflow
 Exception Details:
   Location:
-    comp207p/target/ConstantVariableFolding.methodThree()Z @9: if_icmple
+    comp207p/target/ConstantVariableFolding.methodThree()Z @4: istore_2
   Reason:
-    Expected stackmap frame at this location.
+    Attempt to pop empty stack.
+  Current Frame:
+    bci: @4
+    flags: { }
+    locals: { 'comp207p/target/ConstantVariableFolding', integer }
+    stack: { }
   Bytecode:
-    0x0000000: 1130 393c 1204 3d1b 1ca4 0007 04a7 0004
-    0x0000010: 03ac                                   
+    0x0000000: 1130 393c 3d1b 1ca4 0007 04a7 0004 03ac
+    0x0000010:                                        
 
 	at comp207p.target.ConstantVariableFoldingTest.<init>(Unknown Source)
 	at java.lang.reflect.Constructor.newInstance(Constructor.java:422)
 
 Testcase: testMethodFour took 0 sec
 	Caused an ERROR
-Expecting a stackmap frame at branch target 16
+Operand stack underflow
 Exception Details:
   Location:
-    comp207p/target/ConstantVariableFolding.methodThree()Z @9: if_icmple
+    comp207p/target/ConstantVariableFolding.methodThree()Z @4: istore_2
   Reason:
-    Expected stackmap frame at this location.
+    Attempt to pop empty stack.
+  Current Frame:
+    bci: @4
+    flags: { }
+    locals: { 'comp207p/target/ConstantVariableFolding', integer }
+    stack: { }
   Bytecode:
-    0x0000000: 1130 393c 1204 3d1b 1ca4 0007 04a7 0004
-    0x0000010: 03ac                                   
+    0x0000000: 1130 393c 3d1b 1ca4 0007 04a7 0004 03ac
+    0x0000010:                                        
 
-java.lang.VerifyError: Expecting a stackmap frame at branch target 16
+java.lang.VerifyError: Operand stack underflow
 Exception Details:
   Location:
-    comp207p/target/ConstantVariableFolding.methodThree()Z @9: if_icmple
+    comp207p/target/ConstantVariableFolding.methodThree()Z @4: istore_2
   Reason:
-    Expected stackmap frame at this location.
+    Attempt to pop empty stack.
+  Current Frame:
+    bci: @4
+    flags: { }
+    locals: { 'comp207p/target/ConstantVariableFolding', integer }
+    stack: { }
   Bytecode:
-    0x0000000: 1130 393c 1204 3d1b 1ca4 0007 04a7 0004
-    0x0000010: 03ac                                   
+    0x0000000: 1130 393c 3d1b 1ca4 0007 04a7 0004 03ac
+    0x0000010:                                        
 
 	at comp207p.target.ConstantVariableFoldingTest.<init>(Unknown Source)
 	at java.lang.reflect.Constructor.newInstance(Constructor.java:422)
 
 Testcase: testMethodOne took 0 sec
 	Caused an ERROR
-Expecting a stackmap frame at branch target 16
+Operand stack underflow
 Exception Details:
   Location:
-    comp207p/target/ConstantVariableFolding.methodThree()Z @9: if_icmple
+    comp207p/target/ConstantVariableFolding.methodThree()Z @4: istore_2
   Reason:
-    Expected stackmap frame at this location.
+    Attempt to pop empty stack.
+  Current Frame:
+    bci: @4
+    flags: { }
+    locals: { 'comp207p/target/ConstantVariableFolding', integer }
+    stack: { }
   Bytecode:
-    0x0000000: 1130 393c 1204 3d1b 1ca4 0007 04a7 0004
-    0x0000010: 03ac                                   
+    0x0000000: 1130 393c 3d1b 1ca4 0007 04a7 0004 03ac
+    0x0000010:                                        
 
-java.lang.VerifyError: Expecting a stackmap frame at branch target 16
+java.lang.VerifyError: Operand stack underflow
 Exception Details:
   Location:
-    comp207p/target/ConstantVariableFolding.methodThree()Z @9: if_icmple
+    comp207p/target/ConstantVariableFolding.methodThree()Z @4: istore_2
   Reason:
-    Expected stackmap frame at this location.
+    Attempt to pop empty stack.
+  Current Frame:
+    bci: @4
+    flags: { }
+    locals: { 'comp207p/target/ConstantVariableFolding', integer }
+    stack: { }
   Bytecode:
-    0x0000000: 1130 393c 1204 3d1b 1ca4 0007 04a7 0004
-    0x0000010: 03ac                                   
+    0x0000000: 1130 393c 3d1b 1ca4 0007 04a7 0004 03ac
+    0x0000010:                                        
 
 	at comp207p.target.ConstantVariableFoldingTest.<init>(Unknown Source)
 	at java.lang.reflect.Constructor.newInstance(Constructor.java:422)
 
 Testcase: testMethodTwo took 0 sec
 	Caused an ERROR
-Expecting a stackmap frame at branch target 16
+Operand stack underflow
 Exception Details:
   Location:
-    comp207p/target/ConstantVariableFolding.methodThree()Z @9: if_icmple
+    comp207p/target/ConstantVariableFolding.methodThree()Z @4: istore_2
   Reason:
-    Expected stackmap frame at this location.
+    Attempt to pop empty stack.
+  Current Frame:
+    bci: @4
+    flags: { }
+    locals: { 'comp207p/target/ConstantVariableFolding', integer }
+    stack: { }
   Bytecode:
-    0x0000000: 1130 393c 1204 3d1b 1ca4 0007 04a7 0004
-    0x0000010: 03ac                                   
+    0x0000000: 1130 393c 3d1b 1ca4 0007 04a7 0004 03ac
+    0x0000010:                                        
 
-java.lang.VerifyError: Expecting a stackmap frame at branch target 16
+java.lang.VerifyError: Operand stack underflow
 Exception Details:
   Location:
-    comp207p/target/ConstantVariableFolding.methodThree()Z @9: if_icmple
+    comp207p/target/ConstantVariableFolding.methodThree()Z @4: istore_2
   Reason:
-    Expected stackmap frame at this location.
+    Attempt to pop empty stack.
+  Current Frame:
+    bci: @4
+    flags: { }
+    locals: { 'comp207p/target/ConstantVariableFolding', integer }
+    stack: { }
   Bytecode:
-    0x0000000: 1130 393c 1204 3d1b 1ca4 0007 04a7 0004
-    0x0000010: 03ac                                   
+    0x0000000: 1130 393c 3d1b 1ca4 0007 04a7 0004 03ac
+    0x0000010:                                        
 
 	at comp207p.target.ConstantVariableFoldingTest.<init>(Unknown Source)
 	at java.lang.reflect.Constructor.newInstance(Constructor.java:422)

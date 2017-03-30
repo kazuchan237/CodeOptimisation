@@ -80,11 +80,28 @@ public class ConstantFolder
 				else {
 					temp1 = (int)l.getValue(cpgen);
 				}
+					try{
+						// System.out.println("delte "+handle);
+						instList.delete(handle);
+					}catch(TargetLostException e)
+					{
+						e.printStackTrace();
+					}
+			}
+			else if(handle.getInstruction() instanceof IADD) {
+				try{
+					// System.out.println("delte "+handle);
+					instList.delete(handle);
+				}catch(TargetLostException e)
+				{
+					e.printStackTrace();
+				}
+			}
 
-				System.out.println(handle);
-
-			System.out.println(handle);
-			System.out.println("class name"+ handle.getInstruction().getClass());
+			// 	System.out.println(handle);
+			//
+			// System.out.println(handle);
+			// System.out.println("class name"+ handle.getInstruction().getClass());
 			// if(handle.getInstruction() instanceof LDC)
 			// {
 			// 	System.out.println("LDC");
@@ -114,86 +131,86 @@ public class ConstantFolder
 
 
 
-	private int getIntValue(InstructionHandle a, ConstantPoolGen cpgen)
-	{
-		Instruction instruction = a.getInstruction();
-		if(instruction instanceof LDC)
-		{
-			LDC l = (LDC) instruction;
-			int val = (int) l.getValue(cpgen);
-			System.out.println("true");
-			return val;
-		}
-		return 1;
-	}
-
-
-	private void testMethod(ClassGen cgen, ConstantPoolGen cpgen, Method method)
-	{
-		Code methodCode = method.getCode();
-		InstructionList instList = new InstructionList(methodCode.getCode());
-		MethodGen methodGen = new MethodGen(method.getAccessFlags(), method.getReturnType(), method.getArgumentTypes(), null, method.getName(), cgen.getClassName(), instList, cpgen);
-		InstructionHandle[] handles =instList.getInstructionHandles();
-		for(int i = 0; i<handles.length; i++)
-		{
-			InstructionHandle handle = handles[i];
-			System.out.println(handle);
-			System.out.println(handle.getInstruction());
-			if(handle.getInstruction() instanceof IADD)
-			{
-				System.out.println("IADD");
-				InstructionHandle a = handles[i-1];
-				int aval = getIntValue(a, cpgen);
-				try{
-					instList.delete(a);
-				}catch(TargetLostException e){
-					e.printStackTrace();
-				}
-
-				InstructionHandle b = handles[i-2];
-				int bval = getIntValue(b, cpgen);
-				// System.out.println(a+"and"+b);
-				try{
-					instList.delete(b);
-				}catch(TargetLostException e){
-					e.printStackTrace();
-				}
-
-				cpgen.addInteger(aval+bval);
-				instList.insert(handles[i],new LDC(cpgen.getSize()-1));
-				System.out.println("a + b"+(aval+bval));
-				try{
-					instList.delete(handle );
-				}catch(TargetLostException e){
-					e.printStackTrace();
-				}
-			}
-			else if(handle.getInstruction() instanceof IADD) {
-				try{
-					instList.delete(handle);
-				}catch(TargetLostException e)
-				{
-					e.printStackTrace();
-				}
-			}
-		}
+	// private int getIntValue(InstructionHandle a, ConstantPoolGen cpgen)
+	// {
+	// 	Instruction instruction = a.getInstruction();
+	// 	if(instruction instanceof LDC)
+	// 	{
+	// 		LDC l = (LDC) instruction;
+	// 		int val = (int) l.getValue(cpgen);
+	// 		System.out.println("true");
+	// 		return val;
+	// 	}
+	// 	return 1;
+	// }
+	//
+	//
+	// private void testMethod(ClassGen cgen, ConstantPoolGen cpgen, Method method)
+	// {
+	// 	Code methodCode = method.getCode();
+	// 	InstructionList instList = new InstructionList(methodCode.getCode());
+	// 	MethodGen methodGen = new MethodGen(method.getAccessFlags(), method.getReturnType(), method.getArgumentTypes(), null, method.getName(), cgen.getClassName(), instList, cpgen);
+	// 	InstructionHandle[] handles =instList.getInstructionHandles();
+	// 	for(int i = 0; i<handles.length; i++)
+	// 	{
+	// 		InstructionHandle handle = handles[i];
+	// 		System.out.println(handle);
+	// 		System.out.println(handle.getInstruction());
+	// 		if(handle.getInstruction() instanceof IADD)
+	// 		{
+	// 			System.out.println("IADD");
+	// 			InstructionHandle a = handles[i-1];
+	// 			int aval = getIntValue(a, cpgen);
+	// 			try{
+	// 				instList.delete(a);
+	// 			}catch(TargetLostException e){
+	// 				e.printStackTrace();
+	// 			}
+	//
+	// 			InstructionHandle b = handles[i-2];
+	// 			int bval = getIntValue(b, cpgen);
+	// 			// System.out.println(a+"and"+b);
+	// 			try{
+	// 				instList.delete(b);
+	// 			}catch(TargetLostException e){
+	// 				e.printStackTrace();
+	// 			}
+	//
+	// 			cpgen.addInteger(aval+bval);
+	// 			instList.insert(handles[i],new LDC(cpgen.getSize()-1));
+	// 			System.out.println("a + b"+(aval+bval));
+	// 			try{
+	// 				instList.delete(handle );
+	// 			}catch(TargetLostException e){
+	// 				e.printStackTrace();
+	// 			}
+	// 		}
+	// 		else if(handle.getInstruction() instanceof IADD) {
+	// 			try{
+	// 				instList.delete(handle);
+	// 			}catch(TargetLostException e)
+	// 			{
+	// 				e.printStackTrace();
+	// 			}
+	// 		}
+	// 	}
 
 		// IntstructionHandle[] insthandles = instList.getInstructionHandles();
 		// for(int i = 0; i < insthandles.getLength(); i++){
 		// 	System.out.println(insthandles[i]);
 		// }
-		instList.setPositions(true);
-
-		// set max stack/local
-		methodGen.setMaxStack();
-		methodGen.setMaxLocals();
-
-		// generate the new method with replaced iconst
-		Method nMethod = methodGen.getMethod();
-		// replace the method in the original class
-		cgen.replaceMethod(method, nMethod);
-
-	}
+	// 	instList.setPositions(true);
+	//
+	// 	// set max stack/local
+	// 	methodGen.setMaxStack();
+	// 	methodGen.setMaxLocals();
+	//
+	// 	// generate the new method with replaced iconst
+	// 	Method nMethod = methodGen.getMethod();
+	// 	// replace the method in the original class
+	// 	cgen.replaceMethod(method, nMethod);
+	//
+	// }
 
 	public void optimize()
 	{
@@ -207,7 +224,7 @@ public class ConstantFolder
 		for (Method m : methods)
 		{
 			// optimizeMethod(cgen,cpgen,m);
-			testMethod(cgen,cpgen,m);
+			optimizeMethod(cgen,cpgen,m);
 
 		}
 
