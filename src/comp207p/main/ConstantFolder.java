@@ -48,8 +48,8 @@ public class ConstantFolder
 	// we rewrite integer constants with 5 :)
 	private void optimizeMethod(ClassGen cgen, ConstantPoolGen cpgen, Method method)
 	{
-		int temp1 = 0;
-		int temp2 = 0;
+		Number temp1 = 0;
+		Number temp2 = 0;
 		// Get the Code of the method, which is a collection of bytecode instructions
 		System.out.println(method.toString());
 		Code methodCode = method.getCode();
@@ -65,21 +65,14 @@ public class ConstantFolder
 		for (InstructionHandle handle : instList.getInstructionHandles())
 		{
 			System.out.println(handle);
+
 			if((handle.getInstruction() instanceof LDC)&&(handle.getPosition() != 0))
 			{
 				LDC l = (LDC) handle.getInstruction();
-
 				System.out.println("LDC");
 				System.out.println(l.getValue(cpgen));
-				if(temp1 != 0) {
-					temp2 = (int)l.getValue(cpgen);
-					cpgen.addInteger(temp1+temp2);
-					instList.insert(handle, new LDC(cpgen.getSize()-1));
-				}
-				else {
-					temp1 = (int)l.getValue(cpgen);
-				}
-
+				temp1 = temp2;
+				temp2 = (int)l.getValue(cpgen);
 				System.out.println(handle);
 				try{
 					instList.delete(handle);
@@ -87,15 +80,25 @@ public class ConstantFolder
 				{
 					e.printStackTrace();
 				}
-
 			}
-			else if(handle.getInstruction() instanceof IADD){
-				try{
-					instList.delete(handle);
-				}catch(TargetLostException e)
-				{
-					e.printStackTrace();
-				}
+			// else if(handle.getInstruction() instanceof IADD){
+			// 	cpgen.addInteger(temp1+temp2);
+			// 	instList.insert(handle, new LDC(cpgen.getSize()-1));
+			// 	try{
+			// 		instList.delete(handle);
+			// 	}catch(TargetLostException e)
+			// 	{
+			// 		e.printStackTrace();
+			// 	}
+			// 	temp1 = temp1 + temp2;
+			// 	temp2 = 0;
+			// }
+			else if(handle.getInstruction() instanceof LDC2_W) {
+				LDC2_W l = (LDC2_W) handle.getInstruction();
+				System.out.println("LDC2_W");
+				System.out.println(l.getValue(cpgen));
+				temp1 = temp2;
+				temp2 = (Number)l.getValue(cpgen);
 			}
 		}
 		instList.setPositions(true);
