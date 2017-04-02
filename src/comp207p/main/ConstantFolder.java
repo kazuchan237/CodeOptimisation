@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.HashMap;
 
 import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.Code;
@@ -126,6 +127,22 @@ public class ConstantFolder
 		return arithNumber;
 	}
 
+	private static class LocalVariables{
+		private HashMap<Integer, Number> lvt;
+		public LocalVariables()
+		{
+			this.lvt = new HashMap<Integer,Number>();
+		}
+		public void addVariable(Integer index, Number value)
+		{
+			lvt.put(index,value);
+		}
+		public Number getVariable(Integer index)
+		{
+			return lvt.get(index);
+		}
+	}
+
 	// we rewrite integer constants with 5 :)
 	private void optimizeMethod(ClassGen cgen, ConstantPoolGen cpgen, Method method)
 	{
@@ -141,6 +158,7 @@ public class ConstantFolder
 		MethodGen methodGen = new MethodGen(method.getAccessFlags(), method.getReturnType(), method.getArgumentTypes(), null, method.getName(), cgen.getClassName(), instList, cpgen);
 		Number temp1 = 0;
 		Number temp2 = 0;
+		LocalVariables lvt = new LocalVariables();
 		// InstructionHandle is a wrapper for actual Instructions
 		for (InstructionHandle handle : instList.getInstructionHandles())
 		{
@@ -177,55 +195,19 @@ public class ConstantFolder
 				temp1 = temp2;
 				temp2 = constPush.getValue();
 				System.out.println("temp1 = "+temp1+"temp2 = "+temp2);
-			}else if(instruction instanceof LoadInstruction) //need to load value here
+			}else if(instruction instanceof StoreInstruction)
 			{
-				ConstantPool cp = cpgen.getConstantPool();
-				Constant[] constants = cp.getConstantPool();
+				StoreInstruction a = (StoreInstruction) instruction;
+				System.out.println("storedINstruectino ------"+a.getIndex());
+				lvt.addVariable(a.getIndex(),temp2);
+			}
+				else if(instruction instanceof LoadInstruction) //need to load value here
+			{
 				LoadInstruction loadInst = (LoadInstruction) instruction;
-				System.out.println("load --------- ");
-				// int i = loadInst.produceStack(cpgen);
-				if(instruction instanceof IndexedInstruction)
-				{
-					System.out.println("indexed______");
-					IndexedInstruction a = (IndexedInstruction) instruction;
-					System.out.println(a.getIndex());
-				}
-				if(instruction instanceof LocalVariableInstruction)
-				{
-					System.out.println("localvI ------******* ");
-					System.out.println("index="+loadInst.getIndex());
-					System.out.println(instruction.toString());
-
-					// for(int i = 0; i<constants.length; i++)
-					// {
-					// 	if(constants[i] instanceof ConstantInteger)
-					// 	{
-					// 		ConstantInteger a = (ConstantInteger) constants[i];
-					// 		System.out.println("CONSTANT INTEGER + "+i+"Value = "+a.getBytes());
-					// 	}
-					// 	if(constants[i] instanceof ConstantDouble)
-					// 	{
-					// 		ConstantDouble a = (ConstantDouble) constants[i];
-					// 		System.out.println("CONSTANT Double + "+i+"Value = "+a.getBytes());
-					// 	}
-					// }
-
-					// Constant a = cpgen.getConstant(loadInst.getIndex());
-					// if(a instanceof ConstantInteger)
-					// {
-					// 	ConstantInteger b = (ConstantInteger) a;
-					// 	System.out.println("integer constant");
-					//   System.out.println("a = "+b.getBytes());
-					// }
-					// if(a instanceof ConstantDouble)
-					// {
-					// 	System.out.println("DOUBLE CONSTANT +++++++");
-					// }
-					// if(a instanceof ConstantLong)
-					// {
-					// 	System.out.println("LONDG CONSTANT +++++++++++++++++");
-					// }
-				}
+				System.out.println("load --------- "+loadInst.getIndex());
+				temp1 = temp2;
+				temp2 = lvt.getVariable(loadInst.getIndex());
+				System.out.println("temp1 = "+temp1+" "+temp2);
 			}
 			else if(instruction instanceof IfInstruction) {
 				System.out.println("if");
