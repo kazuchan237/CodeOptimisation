@@ -23,6 +23,7 @@ import org.apache.bcel.classfile.ConstantString;
 import org.apache.bcel.classfile.ConstantUtf8;
 import org.apache.bcel.generic.LDC;
 import org.apache.bcel.generic.*;
+import org.apache.bcel.classfile.*;
 
 
 
@@ -50,6 +51,7 @@ public class ConstantFolder
 		if(instruction instanceof I2D) {
 
 		}
+		return 0;
 	}
 
 
@@ -79,6 +81,12 @@ public class ConstantFolder
 			arithNumber = temp1.intValue()-temp2.intValue();
 			cpgen.addInteger(arithNumber.intValue());
 			System.out.println("isub= "+temp1+" - "+temp2);
+		}
+		else if(instruction instanceof FSUB)
+		{
+			arithNumber = temp1.floatValue() - temp2.floatValue();
+			cpgen.addFloat(arithNumber.floatValue());
+			System.out.println("fsub "+temp1+" - "+temp2);
 		}
 
 		instList.insert(handle,new LDC(cpgen.getSize()-1));
@@ -138,8 +146,53 @@ public class ConstantFolder
 				System.out.println("temp1 = "+temp1+"temp2 = "+temp2);
 			}else if(instruction instanceof LoadInstruction) //need to load value here
 			{
+				ConstantPool cp = cpgen.getConstantPool();
+				Constant[] constants = cp.getConstantPool();
 				LoadInstruction loadInst = (LoadInstruction) instruction;
-				System.out.println("load");
+				System.out.println("load --------- ");
+				// int i = loadInst.produceStack(cpgen);
+				if(instruction instanceof IndexedInstruction)
+				{
+					System.out.println("indexed______");
+					IndexedInstruction a = (IndexedInstruction) instruction;
+					System.out.println(a.getIndex());
+				}
+				if(instruction instanceof LocalVariableInstruction)
+				{
+					System.out.println("localvI ------******* ");
+					System.out.println("index="+loadInst.getIndex());
+					System.out.println(instruction.toString());
+
+					// for(int i = 0; i<constants.length; i++)
+					// {
+					// 	if(constants[i] instanceof ConstantInteger)
+					// 	{
+					// 		ConstantInteger a = (ConstantInteger) constants[i];
+					// 		System.out.println("CONSTANT INTEGER + "+i+"Value = "+a.getBytes());
+					// 	}
+					// 	if(constants[i] instanceof ConstantDouble)
+					// 	{
+					// 		ConstantDouble a = (ConstantDouble) constants[i];
+					// 		System.out.println("CONSTANT Double + "+i+"Value = "+a.getBytes());
+					// 	}
+					// }
+
+					// Constant a = cpgen.getConstant(loadInst.getIndex());
+					// if(a instanceof ConstantInteger)
+					// {
+					// 	ConstantInteger b = (ConstantInteger) a;
+					// 	System.out.println("integer constant");
+					//   System.out.println("a = "+b.getBytes());
+					// }
+					// if(a instanceof ConstantDouble)
+					// {
+					// 	System.out.println("DOUBLE CONSTANT +++++++");
+					// }
+					// if(a instanceof ConstantLong)
+					// {
+					// 	System.out.println("LONDG CONSTANT +++++++++++++++++");
+					// }
+				}
 			}
 			else if(instruction instanceof ConversionInstruction) {
 				 System.out.println("convert");
@@ -187,6 +240,7 @@ public class ConstantFolder
 		for (Method m : methods)
 		{
 			optimizeMethod(cgen,cpgen,m);
+			System.out.println("");
 
 		}
 
@@ -194,6 +248,19 @@ public class ConstantFolder
 		// and store it in a member variable
 
 		this.optimized = cgen.getJavaClass();
+
+		// Method[] ms = cgen.getMethods();
+		// for(Method m: ms){
+		// 	LocalVariableTable lvt = m.getLocalVariableTable().getLocalVariableTable();
+		// 	System.out.println("yolo");
+		// 	System.out.println(lvt==null);
+		// 	System.out.println(lvt.getTableLength());
+		// 	LocalVariable lv1 = lvt.getLocalVariable(0,0);
+		// 	System.out.println("lv1 = "+lv1+" "+lv1.getName());
+		// }
+
+
+
 	}
 
 

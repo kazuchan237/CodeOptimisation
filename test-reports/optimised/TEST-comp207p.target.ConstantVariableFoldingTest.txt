@@ -1,104 +1,134 @@
 Testsuite: comp207p.target.ConstantVariableFoldingTest
-<<<<<<< Updated upstream
-Tests run: 4, Failures: 0, Errors: 4, Skipped: 0, Time elapsed: 0.025 sec
+Tests run: 4, Failures: 0, Errors: 4, Skipped: 0, Time elapsed: 0.033 sec
 
-<<<<<<< HEAD
-Testcase: testMethodThree took 0.003 sec
-=======
-Testcase: testMethodThree took 0.002 sec
-=======
-Tests run: 4, Failures: 0, Errors: 4, Skipped: 0, Time elapsed: 0.018 sec
-
-Testcase: testMethodThree took 0.001 sec
->>>>>>> Stashed changes
->>>>>>> e2491a1f2c1b2ac019ad68d243b66715802a4642
+Testcase: testMethodThree took 0.004 sec
 	Caused an ERROR
-Illegal type at constant pool entry 32 in class comp207p.target.ConstantVariableFolding
+Bad type on operand stack
 Exception Details:
   Location:
-    comp207p/target/ConstantVariableFolding.methodTwo()D @9: ldc
+    comp207p/target/ConstantVariableFolding.methodTwo()D @11: dreturn
   Reason:
-    Constant pool index 32 is invalid
+    Type integer (current frame, stack[4]) is not assignable to double_2nd
+  Current Frame:
+    bci: @11
+    flags: { }
+    locals: { 'comp207p/target/ConstantVariableFolding', double, double_2nd, integer }
+    stack: { double, double_2nd, double, double_2nd, integer }
   Bytecode:
-    0x0000000: 1400 0248 043e 271d 8712 20af          
+    0x0000000: 1400 0248 043e 271d 8712 1eaf          
 
-java.lang.VerifyError: Illegal type at constant pool entry 32 in class comp207p.target.ConstantVariableFolding
+java.lang.VerifyError: Bad type on operand stack
 Exception Details:
   Location:
-    comp207p/target/ConstantVariableFolding.methodTwo()D @9: ldc
+    comp207p/target/ConstantVariableFolding.methodTwo()D @11: dreturn
   Reason:
-    Constant pool index 32 is invalid
+    Type integer (current frame, stack[4]) is not assignable to double_2nd
+  Current Frame:
+    bci: @11
+    flags: { }
+    locals: { 'comp207p/target/ConstantVariableFolding', double, double_2nd, integer }
+    stack: { double, double_2nd, double, double_2nd, integer }
   Bytecode:
-    0x0000000: 1400 0248 043e 271d 8712 20af          
+    0x0000000: 1400 0248 043e 271d 8712 1eaf          
 
 	at comp207p.target.ConstantVariableFoldingTest.<init>(Unknown Source)
 	at java.lang.reflect.Constructor.newInstance(Constructor.java:422)
 
 Testcase: testMethodFour took 0 sec
 	Caused an ERROR
-Illegal type at constant pool entry 32 in class comp207p.target.ConstantVariableFolding
+Bad type on operand stack
 Exception Details:
   Location:
-    comp207p/target/ConstantVariableFolding.methodTwo()D @9: ldc
+    comp207p/target/ConstantVariableFolding.methodTwo()D @11: dreturn
   Reason:
-    Constant pool index 32 is invalid
+    Type integer (current frame, stack[4]) is not assignable to double_2nd
+  Current Frame:
+    bci: @11
+    flags: { }
+    locals: { 'comp207p/target/ConstantVariableFolding', double, double_2nd, integer }
+    stack: { double, double_2nd, double, double_2nd, integer }
   Bytecode:
-    0x0000000: 1400 0248 043e 271d 8712 20af          
+    0x0000000: 1400 0248 043e 271d 8712 1eaf          
 
-java.lang.VerifyError: Illegal type at constant pool entry 32 in class comp207p.target.ConstantVariableFolding
+java.lang.VerifyError: Bad type on operand stack
 Exception Details:
   Location:
-    comp207p/target/ConstantVariableFolding.methodTwo()D @9: ldc
+    comp207p/target/ConstantVariableFolding.methodTwo()D @11: dreturn
   Reason:
-    Constant pool index 32 is invalid
+    Type integer (current frame, stack[4]) is not assignable to double_2nd
+  Current Frame:
+    bci: @11
+    flags: { }
+    locals: { 'comp207p/target/ConstantVariableFolding', double, double_2nd, integer }
+    stack: { double, double_2nd, double, double_2nd, integer }
   Bytecode:
-    0x0000000: 1400 0248 043e 271d 8712 20af          
+    0x0000000: 1400 0248 043e 271d 8712 1eaf          
 
 	at comp207p.target.ConstantVariableFoldingTest.<init>(Unknown Source)
 	at java.lang.reflect.Constructor.newInstance(Constructor.java:422)
 
 Testcase: testMethodOne took 0 sec
 	Caused an ERROR
-Illegal type at constant pool entry 32 in class comp207p.target.ConstantVariableFolding
+Bad type on operand stack
 Exception Details:
   Location:
-    comp207p/target/ConstantVariableFolding.methodTwo()D @9: ldc
+    comp207p/target/ConstantVariableFolding.methodTwo()D @11: dreturn
   Reason:
-    Constant pool index 32 is invalid
+    Type integer (current frame, stack[4]) is not assignable to double_2nd
+  Current Frame:
+    bci: @11
+    flags: { }
+    locals: { 'comp207p/target/ConstantVariableFolding', double, double_2nd, integer }
+    stack: { double, double_2nd, double, double_2nd, integer }
   Bytecode:
-    0x0000000: 1400 0248 043e 271d 8712 20af          
+    0x0000000: 1400 0248 043e 271d 8712 1eaf          
 
-java.lang.VerifyError: Illegal type at constant pool entry 32 in class comp207p.target.ConstantVariableFolding
+java.lang.VerifyError: Bad type on operand stack
 Exception Details:
   Location:
-    comp207p/target/ConstantVariableFolding.methodTwo()D @9: ldc
+    comp207p/target/ConstantVariableFolding.methodTwo()D @11: dreturn
   Reason:
-    Constant pool index 32 is invalid
+    Type integer (current frame, stack[4]) is not assignable to double_2nd
+  Current Frame:
+    bci: @11
+    flags: { }
+    locals: { 'comp207p/target/ConstantVariableFolding', double, double_2nd, integer }
+    stack: { double, double_2nd, double, double_2nd, integer }
   Bytecode:
-    0x0000000: 1400 0248 043e 271d 8712 20af          
+    0x0000000: 1400 0248 043e 271d 8712 1eaf          
 
 	at comp207p.target.ConstantVariableFoldingTest.<init>(Unknown Source)
 	at java.lang.reflect.Constructor.newInstance(Constructor.java:422)
 
 Testcase: testMethodTwo took 0 sec
 	Caused an ERROR
-Illegal type at constant pool entry 32 in class comp207p.target.ConstantVariableFolding
+Bad type on operand stack
 Exception Details:
   Location:
-    comp207p/target/ConstantVariableFolding.methodTwo()D @9: ldc
+    comp207p/target/ConstantVariableFolding.methodTwo()D @11: dreturn
   Reason:
-    Constant pool index 32 is invalid
+    Type integer (current frame, stack[4]) is not assignable to double_2nd
+  Current Frame:
+    bci: @11
+    flags: { }
+    locals: { 'comp207p/target/ConstantVariableFolding', double, double_2nd, integer }
+    stack: { double, double_2nd, double, double_2nd, integer }
   Bytecode:
-    0x0000000: 1400 0248 043e 271d 8712 20af          
+    0x0000000: 1400 0248 043e 271d 8712 1eaf          
 
-java.lang.VerifyError: Illegal type at constant pool entry 32 in class comp207p.target.ConstantVariableFolding
+java.lang.VerifyError: Bad type on operand stack
 Exception Details:
   Location:
-    comp207p/target/ConstantVariableFolding.methodTwo()D @9: ldc
+    comp207p/target/ConstantVariableFolding.methodTwo()D @11: dreturn
   Reason:
-    Constant pool index 32 is invalid
+    Type integer (current frame, stack[4]) is not assignable to double_2nd
+  Current Frame:
+    bci: @11
+    flags: { }
+    locals: { 'comp207p/target/ConstantVariableFolding', double, double_2nd, integer }
+    stack: { double, double_2nd, double, double_2nd, integer }
   Bytecode:
-    0x0000000: 1400 0248 043e 271d 8712 20af          
+    0x0000000: 1400 0248 043e 271d 8712 1eaf          
 
 	at comp207p.target.ConstantVariableFoldingTest.<init>(Unknown Source)
 	at java.lang.reflect.Constructor.newInstance(Constructor.java:422)
