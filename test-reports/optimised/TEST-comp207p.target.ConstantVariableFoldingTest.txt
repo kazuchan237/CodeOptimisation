@@ -1,7 +1,29 @@
 Testsuite: comp207p.target.ConstantVariableFoldingTest
+<<<<<<< HEAD
 Tests run: 4, Failures: 0, Errors: 4, Skipped: 0, Time elapsed: 0.033 sec
 
 Testcase: testMethodThree took 0.004 sec
+=======
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+Tests run: 4, Failures: 0, Errors: 4, Skipped: 0, Time elapsed: 0.025 sec
+
+<<<<<<< HEAD
+Testcase: testMethodThree took 0.003 sec
+=======
+Testcase: testMethodThree took 0.002 sec
+=======
+Tests run: 4, Failures: 0, Errors: 4, Skipped: 0, Time elapsed: 0.018 sec
+
+Testcase: testMethodThree took 0.001 sec
+>>>>>>> Stashed changes
+>>>>>>> e2491a1f2c1b2ac019ad68d243b66715802a4642
+=======
+Tests run: 4, Failures: 0, Errors: 4, Skipped: 0, Time elapsed: 0.018 sec
+
+Testcase: testMethodThree took 0.001 sec
+>>>>>>> Stashed changes
+>>>>>>> f6dd34c2197d26640d0b553dcdf0ad23721e26b4
 	Caused an ERROR
 Bad type on operand stack
 Exception Details:
