@@ -45,11 +45,46 @@ public class ConstantFolder
 		}
 	}
 
-	private int convert(InstructionHandle handle, Instruction instruction, ConstantPoolGen cpgen, InstructionList instList, Number temp2)
+	private boolean condition(InstructionHandle handle, Instruction instruction, ConstantPoolGen cpgen, InstructionList instList, Number temp, Number temp3)
 	{
-		if(instruction instanceof I2D) {
 
-		}
+			long temp1 = temp.longValue();
+			long temp2 = temp3.longValue();
+			System.out.println(temp2);
+			System.out.println(temp1);
+			if(instruction instanceof IF_ICMPLE)  {
+	     		if(temp2 <= temp1) {
+						return true;
+					}
+			}
+			else if(instruction instanceof IF_ICMPEQ)  {
+	     		if(temp2 == temp1) {
+						return true;
+					}
+			}
+			else if(instruction instanceof IF_ICMPGE)  {
+	     		if(temp2 >= temp1) {
+						return true;
+					}
+			}
+			else if(instruction instanceof IF_ICMPGT)  {
+	     		if(temp2 > temp1) {
+						return true;
+					}
+			}
+			else if(instruction instanceof IF_ICMPLT)  {
+	     		if(temp2 < temp1) {
+						return true;
+					}
+			}
+			else if(instruction instanceof IF_ICMPNE)  {
+	     		if(temp2 != temp1) {
+						return true;
+					}
+			}
+
+
+		return false;
 	}
 
 
@@ -141,12 +176,17 @@ public class ConstantFolder
 				LoadInstruction loadInst = (LoadInstruction) instruction;
 				System.out.println("load");
 			}
-			else if(instruction instanceof ConversionInstruction) {
-				 System.out.println("convert");
-				//  temp1 = temp2;
-				 temp2 = convert(handle, instruction, cpgen, instList, temp2);
-
+			else if(instruction instanceof IfInstruction) {
+				System.out.println("if");
+				boolean answer = condition(handle, instruction, cpgen, instList, temp1, temp2);
+				System.out.println(answer);
 			}
+			// else if(instruction instanceof ConversionInstruction) {
+			// 	 System.out.println("convert");
+			// 	//  temp1 = temp2;
+			// 	 temp2 = convert(handle, instruction, cpgen, instList, temp2);
+			//
+			// }
 			else if(instruction instanceof ArithmeticInstruction)
 			{
 				System.out.println("arith");

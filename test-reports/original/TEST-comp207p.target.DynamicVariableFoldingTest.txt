@@ -1,4 +1,5 @@
 Testsuite: comp207p.target.DynamicVariableFoldingTest
+<<<<<<< Updated upstream
 <<<<<<< HEAD
 Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.022 sec
 
@@ -12,12 +13,13 @@ Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.032 sec
 Testcase: testMethodThree took 0.002 sec
 Testcase: testMethodFour took 0.004 sec
 =======
+=======
+>>>>>>> Stashed changes
 Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.016 sec
 
 Testcase: testMethodThree took 0.001 sec
-Testcase: testMethodFour took 0.002 sec
->>>>>>> Stashed changes
+Testcase: testMethodFour took 0.001 sec
 Testcase: testMethodOne took 0 sec
 >>>>>>> e2491a1f2c1b2ac019ad68d243b66715802a4642
 Testcase: testMethodTwoReturn took 0 sec
-Testcase: testMethodTwoOut took 0.001 sec
+Testcase: testMethodTwoOut took 0 sec
