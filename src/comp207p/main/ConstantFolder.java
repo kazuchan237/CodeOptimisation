@@ -114,14 +114,14 @@ public class ConstantFolder
 				temp1 = temp2;
 				temp2 = (Number)l.getValue(cpgen);
 			}
-			else if(instruction instanceof ConstantPushInstruction)
+			else if(instruction instanceof ConstantPushInstruction) //gets value for SIPUSH, BIPUSH etc
 			{
 				ConstantPushInstruction constPush = (ConstantPushInstruction) instruction;
 				System.out.println("push= "+(constPush.getValue()));
 				temp1 = temp2;
 				temp2 = constPush.getValue();
 				System.out.println("temp1 = "+temp1+"temp2 = "+temp2);
-			}else if(instruction instanceof LoadInstruction)
+			}else if(instruction instanceof LoadInstruction) //need to load value here
 			{
 				LoadInstruction loadInst = (LoadInstruction) instruction;
 				System.out.println("load");
@@ -129,7 +129,7 @@ public class ConstantFolder
 			else if(instruction instanceof ArithmeticInstruction)
 			{
 				System.out.println("arith");
-				arithmeticMethod(handle, instruction, cpgen, instList, temp1, temp2);
+				arithmeticMethod(handle, instruction, cpgen, instList, temp1, temp2); //handle IADD, DADD, ISUB etc
 				try
 				{
 					instList.delete(handle);
