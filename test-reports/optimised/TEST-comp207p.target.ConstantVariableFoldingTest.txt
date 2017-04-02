@@ -1,7 +1,13 @@
 Testsuite: comp207p.target.ConstantVariableFoldingTest
+<<<<<<< Updated upstream
 Tests run: 4, Failures: 0, Errors: 4, Skipped: 0, Time elapsed: 0.025 sec
 
 Testcase: testMethodThree took 0.002 sec
+=======
+Tests run: 4, Failures: 0, Errors: 4, Skipped: 0, Time elapsed: 0.018 sec
+
+Testcase: testMethodThree took 0.001 sec
+>>>>>>> Stashed changes
 	Caused an ERROR
 Illegal type at constant pool entry 32 in class comp207p.target.ConstantVariableFolding
 Exception Details:

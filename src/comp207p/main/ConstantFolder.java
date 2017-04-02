@@ -45,6 +45,14 @@ public class ConstantFolder
 		}
 	}
 
+	private int convert(InstructionHandle handle, Instruction instruction, ConstantPoolGen cpgen, InstructionList instList, Number temp2)
+	{
+		if(instruction instanceof I2D) {
+
+		}
+	}
+
+
 	private Number arithmeticMethod(InstructionHandle handle, Instruction instruction, ConstantPoolGen cpgen, InstructionList instList, Number temp1, Number temp2)
 	{
 		Number arithNumber = 0;
@@ -131,6 +139,12 @@ public class ConstantFolder
 			{
 				LoadInstruction loadInst = (LoadInstruction) instruction;
 				System.out.println("load");
+			}
+			else if(instruction instanceof ConversionInstruction) {
+				 System.out.println("convert");
+				//  temp1 = temp2;
+				 temp2 = convert(handle, instruction, cpgen, instList, temp2);
+
 			}
 			else if(instruction instanceof ArithmeticInstruction)
 			{
