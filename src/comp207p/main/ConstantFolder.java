@@ -45,11 +45,13 @@ public class ConstantFolder
 		}
 	}
 
-	private void arithmeticMethod(InstructionHandle handle, Instruction instruction, ConstantPoolGen cpgen, InstructionList instList, Number temp1, Number temp2)
+	private Number arithmeticMethod(InstructionHandle handle, Instruction instruction, ConstantPoolGen cpgen, InstructionList instList, Number temp1, Number temp2)
 	{
+		Number arithNumber = 0;
 		if(instruction instanceof IADD)
 		{
-			cpgen.addInteger(temp1.intValue()+temp2.intValue());
+			arithNumber = temp1.intValue()+temp2.intValue();
+			cpgen.addInteger(arithNumber.intValue());
 			instList.insert(handle,new LDC(cpgen.getSize()-1));
 			System.out.println("iadd "+temp1+" +  "+temp2);
 		}
@@ -67,8 +69,11 @@ public class ConstantFolder
 		}
 		else if(instruction instanceof ISUB)
 		{
-			// cpgen.addInteger()
+			System.out.println("isub"+temp1+" - "+temp2);
+			cpgen.addInteger(temp1.intValue()-temp2.intValue());
+			instList.insert(handle, new LDC(cpgen.getSize()-1));
 		}
+		return arithNumber;
 	}
 
 	// we rewrite integer constants with 5 :)
@@ -98,6 +103,7 @@ public class ConstantFolder
 				System.out.println(l.getValue(cpgen));
 				temp1 = temp2;
 				temp2 = (int)l.getValue(cpgen);
+				System.out.println("temp1="+temp1+" 2 = "+temp2);
 				System.out.println(handle);
 				try{
 					instList.delete(handle);
@@ -129,7 +135,9 @@ public class ConstantFolder
 			else if(instruction instanceof ArithmeticInstruction)
 			{
 				System.out.println("arith");
-				arithmeticMethod(handle, instruction, cpgen, instList, temp1, temp2); //handle IADD, DADD, ISUB etc
+				Number temp3 = temp2;
+				temp2 =	arithmeticMethod(handle, instruction, cpgen, instList, temp1, temp2); //handle IADD, DADD, ISUB etc
+				temp1 = temp3;
 				try
 				{
 					instList.delete(handle);
