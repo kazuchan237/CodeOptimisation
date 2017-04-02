@@ -1,5 +1,13 @@
 Testsuite: comp207p.target.ConstantVariableFoldingTest
+<<<<<<< HEAD
 Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.018 sec
+=======
+<<<<<<< Updated upstream
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.03 sec
+=======
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.014 sec
+>>>>>>> Stashed changes
+>>>>>>> e2491a1f2c1b2ac019ad68d243b66715802a4642
 
 Testcase: testMethodThree took 0 sec
 Testcase: testMethodFour took 0 sec
