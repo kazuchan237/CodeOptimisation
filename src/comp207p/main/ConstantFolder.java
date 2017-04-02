@@ -110,6 +110,12 @@ public class ConstantFolder
 			cpgen.addDouble(arithNumber.doubleValue());
 			System.out.println("dadd "+temp1+" +  "+temp2);
 		}
+		else if(instruction instanceof LADD)
+		{
+			arithNumber = temp1.longValue()+temp2.longValue();
+			cpgen.addLong(arithNumber.longValue());
+			System.out.println("ladd"+temp1+" + "+temp2);
+		}
 		else if(instruction instanceof ISUB)
 		{
 			arithNumber = temp1.intValue()-temp2.intValue();
@@ -121,6 +127,24 @@ public class ConstantFolder
 			arithNumber = temp1.floatValue() - temp2.floatValue();
 			cpgen.addFloat(arithNumber.floatValue());
 			System.out.println("fsub "+temp1+" - "+temp2);
+		}
+		else if(instruction instanceof DSUB)
+		{
+			arithNumber = temp1.doubleValue() - temp2.doubleValue();
+			cpgen.addDouble(arithNumber.doubleValue());
+			System.out.println("dsum"+temp1+" - "+temp2);
+		}
+		else if(instruction instanceof LSUB)
+		{
+			arithNumber = temp1.longValue() - temp2.longValue();
+			cpgen.addLong(arithNumber.longValue());
+			System.out.println("lsub"+temp1+" - "+temp2);
+		}
+		else if(instruction instanceof IMUL)
+		{
+			arithNumber = temp1.intValue() * temp2.intValue();
+			cpgen.addInteger(arithNumber.intValue());
+			System.out.println("imul "+temp1+" * "+temp2);
 		}
 
 		instList.insert(handle,new LDC(cpgen.getSize()-1));
