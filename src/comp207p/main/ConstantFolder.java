@@ -45,11 +45,35 @@ public class ConstantFolder
 		}
 	}
 
+	private void arithmeticMethod(InstructionHandle handle, Instruction instruction, ConstantPoolGen cpgen, InstructionList instList, Number temp1, Number temp2)
+	{
+		if(instruction instanceof IADD)
+		{
+			cpgen.addInteger(temp1.intValue()+temp2.intValue());
+			instList.insert(handle,new LDC(cpgen.getSize()-1));
+			System.out.println("iadd "+temp1+" +  "+temp2);
+		}
+		else if(instruction instanceof FADD)
+		{
+			cpgen.addFloat(temp1.floatValue()+temp2.floatValue());
+			instList.insert(handle,new LDC(cpgen.getSize()-1));
+			System.out.println("fadd "+temp1+" +  "+temp2);
+		}
+		else if(instruction instanceof DADD)
+		{
+			cpgen.addDouble(temp1.doubleValue()+temp2.doubleValue());
+			instList.insert(handle,new LDC(cpgen.getSize()-1));
+			System.out.println("dadd "+temp1+" +  "+temp2);
+		}
+		else if(instruction instanceof ISUB)
+		{
+			// cpgen.addInteger()
+		}
+	}
+
 	// we rewrite integer constants with 5 :)
 	private void optimizeMethod(ClassGen cgen, ConstantPoolGen cpgen, Method method)
 	{
-		Number temp1 = 0;
-		Number temp2 = 0;
 		// Get the Code of the method, which is a collection of bytecode instructions
 		System.out.println(method.toString());
 		Code methodCode = method.getCode();
@@ -60,15 +84,16 @@ public class ConstantFolder
 
 		// Initialise a method generator with the original method as the baseline
 		MethodGen methodGen = new MethodGen(method.getAccessFlags(), method.getReturnType(), method.getArgumentTypes(), null, method.getName(), cgen.getClassName(), instList, cpgen);
-
+		Number temp1 = 0;
+		Number temp2 = 0;
 		// InstructionHandle is a wrapper for actual Instructions
 		for (InstructionHandle handle : instList.getInstructionHandles())
 		{
 			System.out.println(handle);
-
-			if((handle.getInstruction() instanceof LDC)&&(handle.getPosition() != 0))
+			Instruction instruction = handle.getInstruction();
+			if((instruction instanceof LDC)&&(handle.getPosition() != 0))
 			{
-				LDC l = (LDC) handle.getInstruction();
+				LDC l = (LDC) instruction;
 				System.out.println("LDC");
 				System.out.println(l.getValue(cpgen));
 				temp1 = temp2;
@@ -81,24 +106,37 @@ public class ConstantFolder
 					e.printStackTrace();
 				}
 			}
-			// else if(handle.getInstruction() instanceof IADD){
-			// 	cpgen.addInteger(temp1+temp2);
-			// 	instList.insert(handle, new LDC(cpgen.getSize()-1));
-			// 	try{
-			// 		instList.delete(handle);
-			// 	}catch(TargetLostException e)
-			// 	{
-			// 		e.printStackTrace();
-			// 	}
-			// 	temp1 = temp1 + temp2;
-			// 	temp2 = 0;
-			// }
-			else if(handle.getInstruction() instanceof LDC2_W) {
+			else if(handle.getInstruction() instanceof LDC2_W)
+			{
 				LDC2_W l = (LDC2_W) handle.getInstruction();
 				System.out.println("LDC2_W");
 				System.out.println(l.getValue(cpgen));
 				temp1 = temp2;
 				temp2 = (Number)l.getValue(cpgen);
+			}
+			else if(instruction instanceof ConstantPushInstruction)
+			{
+				ConstantPushInstruction constPush = (ConstantPushInstruction) instruction;
+				System.out.println("push= "+(constPush.getValue()));
+				temp1 = temp2;
+				temp2 = constPush.getValue();
+				System.out.println("temp1 = "+temp1+"temp2 = "+temp2);
+			}else if(instruction instanceof LoadInstruction)
+			{
+				LoadInstruction loadInst = (LoadInstruction) instruction;
+				System.out.println("load");
+			}
+			else if(instruction instanceof ArithmeticInstruction)
+			{
+				System.out.println("arith");
+				arithmeticMethod(handle, instruction, cpgen, instList, temp1, temp2);
+				try
+				{
+					instList.delete(handle);
+				}catch(TargetLostException e)
+				{
+					e.printStackTrace();
+				}
 			}
 		}
 		instList.setPositions(true);
