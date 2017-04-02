@@ -52,27 +52,28 @@ public class ConstantFolder
 		{
 			arithNumber = temp1.intValue()+temp2.intValue();
 			cpgen.addInteger(arithNumber.intValue());
-			instList.insert(handle,new LDC(cpgen.getSize()-1));
 			System.out.println("iadd "+temp1+" +  "+temp2);
 		}
 		else if(instruction instanceof FADD)
 		{
-			cpgen.addFloat(temp1.floatValue()+temp2.floatValue());
-			instList.insert(handle,new LDC(cpgen.getSize()-1));
+			arithNumber = temp1.floatValue()+temp2.floatValue();
+			cpgen.addFloat(arithNumber.floatValue());
 			System.out.println("fadd "+temp1+" +  "+temp2);
 		}
 		else if(instruction instanceof DADD)
 		{
-			cpgen.addDouble(temp1.doubleValue()+temp2.doubleValue());
-			instList.insert(handle,new LDC(cpgen.getSize()-1));
+			arithNumber = temp1.doubleValue()+temp2.doubleValue();
+			cpgen.addDouble(arithNumber.doubleValue());
 			System.out.println("dadd "+temp1+" +  "+temp2);
 		}
 		else if(instruction instanceof ISUB)
 		{
-			System.out.println("isub"+temp1+" - "+temp2);
-			cpgen.addInteger(temp1.intValue()-temp2.intValue());
-			instList.insert(handle, new LDC(cpgen.getSize()-1));
+			arithNumber = temp1.intValue()-temp2.intValue();
+			cpgen.addInteger(arithNumber.intValue());
+			System.out.println("isub= "+temp1+" - "+temp2);
 		}
+
+		instList.insert(handle,new LDC(cpgen.getSize()-1));
 		return arithNumber;
 	}
 
