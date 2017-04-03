@@ -146,6 +146,48 @@ public class ConstantFolder
 			cpgen.addInteger(arithNumber.intValue());
 			System.out.println("imul "+temp1+" * "+temp2);
 		}
+		else if(instruction instanceof DMUL)
+		{
+			arithNumber = temp1.doubleValue() * temp2.doubleValue();
+			cpgen.addDouble(arithNumber.doubleValue());
+			System.out.println("dmul "+temp1+"*"+temp2);
+		}
+		else if(instruction instanceof FMUL)
+		{
+			arithNumber = temp1.floatValue() * temp2.floatValue();
+			cpgen.addFloat(arithNumber.floatValue());
+			System.out.println("fmul"+temp1+"*"+temp2);
+		}
+		else if(instruction instanceof LMUL)
+		{
+			arithNumber = temp1.longValue() * temp2.longValue();
+			cpgen.addLong(arithNumber.longValue());
+			System.out.println("lmul"+temp1+"*"+temp2);
+		}
+		else if(instruction instanceof IDIV)
+		{
+			arithNumber = temp1.intValue() / temp2.intValue();
+			cpgen.addInteger(arithNumber.intValue());
+			System.out.println("idiv"+temp1+"/"+temp2);
+		}
+		else if(instruction instanceof DDIV)
+		{
+			arithNumber = temp1.doubleValue() / temp2.doubleValue();
+			cpgen.addDouble(arithNumber.doubleValue());
+			System.out.println("ddiv"+temp1+"/"+temp2);
+		}
+		else if(instruction instanceof FDIV)
+		{
+			arithNumber = temp1.floatValue() / temp2.floatValue();
+			cpgen.addFloat(arithNumber.floatValue());
+			System.out.println("fdiv"+temp1+"/"+temp2);
+		}
+		else if(instruction instanceof LDIV)
+		{
+			arithNumber = temp1.longValue() / temp2.longValue();
+			cpgen.addLong(arithNumber.longValue());
+			System.out.println("ldiv"+temp1+"/"+temp2);
+		}
 
 		instList.insert(handle,new LDC(cpgen.getSize()-1));
 		return arithNumber;
