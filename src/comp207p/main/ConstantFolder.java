@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.HashMap;
+import java.math.BigDecimal;
 
 import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.Code;
@@ -46,44 +47,85 @@ public class ConstantFolder
 		}
 	}
 
-	private boolean condition(InstructionHandle handle, Instruction instruction, ConstantPoolGen cpgen, InstructionList instList, Number temp, Number temp3)
+	private boolean condition(InstructionHandle handle, Instruction instruction, ConstantPoolGen cpgen, InstructionList instList, Number temp, Number temp3, int type)
 	{
-			long temp1 = temp.longValue();
-			long temp2 = temp3.longValue();
-			System.out.println(temp2);
-			System.out.println(temp1);
-			if(instruction instanceof IF_ICMPLE)  {
-	     		if(temp2 <= temp1) {
-						return true;
-					}
-			}
-			else if(instruction instanceof IF_ICMPEQ)  {
-	     		if(temp2 == temp1) {
-						return true;
-					}
-			}
-			else if(instruction instanceof IF_ICMPGE)  {
-	     		if(temp2 >= temp1) {
-						return true;
-					}
-			}
-			else if(instruction instanceof IF_ICMPGT)  {
-	     		if(temp2 > temp1) {
-						return true;
-					}
-			}
-			else if(instruction instanceof IF_ICMPLT)  {
-	     		if(temp2 < temp1) {
-						return true;
-					}
-			}
-			else if(instruction instanceof IF_ICMPNE)  {
-	     		if(temp2 != temp1) {
-						return true;
-					}
-			}
+			// long temp1 = temp.longValue();
+		BigDecimal temp2;
+		BigDecimal temp1;
+		if(type == 1) {
+			temp2 = new BigDecimal(temp3.longValue());
+      temp1 = new BigDecimal(temp.longValue());
+		}
+		else if(type == 2) {
+			temp2 = new BigDecimal(temp3.doubleValue());
+      temp1 = new BigDecimal(temp.doubleValue());
+		}
+		else if(type == 3) {
+			temp2 = new BigDecimal(temp3.floatValue());
+      temp1 = new BigDecimal(temp.floatValue());
+		}
+		else {
+			temp2 = new BigDecimal(temp3.intValue());
+      temp1 = new BigDecimal(temp.intValue());
+		}
 
-
+		System.out.println(temp2);
+		System.out.println(temp1);
+		if((instruction instanceof IF_ICMPLE)||(instruction instanceof IFLE))
+		{
+			System.out.println("IFLE");
+			System.out.println(temp2.compareTo(temp1));
+   		if(temp2.compareTo(temp1) == -1)
+			{
+				System.out.println("TRUTH");
+				return true;
+			}
+		}
+		else if((instruction instanceof IF_ICMPEQ)||(instruction instanceof IFEQ))
+		{
+   		if(temp2.equals(temp1))
+			{
+				return true;
+			}
+		}
+		else if((instruction instanceof IF_ICMPGE)||(instruction instanceof IFGE))
+		{
+   		if(temp2.compareTo(temp1) == 1)
+			{
+				return true;
+			}
+		}
+		else if((instruction instanceof IF_ICMPGT)||(instruction instanceof IFGT))
+		{
+   		if(temp2.compareTo(temp1) == 1)
+			{
+				return true;
+			}
+		}
+		else if((instruction instanceof IF_ICMPLT)||(instruction instanceof IFLT))
+		{
+   		if(temp2.compareTo(temp1) == -1)
+			{
+				return true;
+			}
+		}
+		else if((instruction instanceof IF_ICMPNE)||(instruction instanceof IFNE))
+		{
+   		if(!temp2.equals(temp1))
+			{
+				return true;
+			}
+		}
+		// else if(instruction instanceof IFNONNULL) {
+		// 	if(temp2 != null) {
+		// 		return true;
+		// 	}
+		// }
+		// else if(instruction instanceof IFNULL) {
+		// 	if(temp2 == null) {
+		// 		return true;
+		// 	}
+		// }
 		return false;
 	}
 
@@ -223,6 +265,7 @@ public class ConstantFolder
 		Number temp1 = 0;
 		Number temp2 = 0;
 		LocalVariables lvt = new LocalVariables();
+		int type = 0;
 		// InstructionHandle is a wrapper for actual Instructions
 		for (InstructionHandle handle : instList.getInstructionHandles())
 		{
@@ -275,8 +318,19 @@ public class ConstantFolder
 			}
 			else if(instruction instanceof IfInstruction) {
 				System.out.println("if");
-				boolean answer = condition(handle, instruction, cpgen, instList, temp1, temp2);
+				boolean answer = condition(handle, instruction, cpgen, instList, temp1, temp2, type);
 				System.out.println(answer);
+			}
+			else if(instruction instanceof LCMP) {
+				System.out.println("LCMP");
+				type = 1;
+			}
+			else if((instruction instanceof DCMPG)||(instruction instanceof DCMPL)) {
+				type = 2;
+			}
+			else if((instruction instanceof FCMPG)||(instruction instanceof FCMPL))
+			{
+				type = 3;
 			}
 			// else if(instruction instanceof ConversionInstruction) {
 			// 	 System.out.println("convert");
