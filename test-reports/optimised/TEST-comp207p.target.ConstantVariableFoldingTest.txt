@@ -1,5 +1,5 @@
 Testsuite: comp207p.target.ConstantVariableFoldingTest
-Tests run: 4, Failures: 0, Errors: 4, Skipped: 0, Time elapsed: 0.034 sec
+Tests run: 4, Failures: 0, Errors: 4, Skipped: 0, Time elapsed: 0.029 sec
 
 Testcase: testMethodThree took 0.003 sec
 	Caused an ERROR
@@ -70,7 +70,7 @@ Exception Details:
 	at comp207p.target.ConstantVariableFoldingTest.<init>(Unknown Source)
 	at java.lang.reflect.Constructor.newInstance(Constructor.java:422)
 
-Testcase: testMethodTwo took 0.001 sec
+Testcase: testMethodTwo took 0 sec
 	Caused an ERROR
 Illegal type at constant pool entry 33 in class comp207p.target.ConstantVariableFolding
 Exception Details:

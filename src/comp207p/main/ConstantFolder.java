@@ -88,104 +88,104 @@ public class ConstantFolder
 	}
 
 
-	private void arithmeticMethod(InstructionHandle handle, ConstantPoolGen cpgen, Instruction instruction, InstructionList instructList, Number val1, Number val2)
+	private Number arithmeticMethod(InstructionHandle handle, Instruction instruction, ConstantPoolGen cpgen, InstructionList instList, Number val1, Number val2)
 	{
 	  Number arithNumber = 0;
 	  if (instruction instanceof IADD)
 		{
 	    arithNumber = val1.intValue() + val2.intValue();
 	    cpgen.addInteger(arithNumber.intValue());
-	    System.out.println("IADD " + temp1 + " + " + temp2);
+	    System.out.println("IADD " + val1 + " + " + val2);
 	  }
 		else if (instruction instanceof IMUL)
 		{
-	    arithNumber = val1.intValue() * val2.intValue()
+	    arithNumber = val1.intValue() * val2.intValue();
 	    cpgen.addInteger(arithNumber.intValue());
-	    System.out.println("IMUL " + temp1 + " * " + temp2);
+	    System.out.println("IMUL " + val1 + " * " + val2);
 	  }
 		else if (instruction instanceof ISUB)
 		{
-	    arithNumber = val1.intValue() - val2.intValue()
+	    arithNumber = val1.intValue() - val2.intValue();
 	    cpgen.addInteger(arithNumber.intValue());
-	    System.out.println("ISUB " + temp1 + " - " + temp2);
+	    System.out.println("ISUB " + val1 + " - " + val2);
 	  }
 		else if (instruction instanceof IDIV)
 		{
-	    arithNumber = val1.intValue() / val2.intValue()
+	    arithNumber = val1.intValue() / val2.intValue();
 	    cpgen.addInteger(arithNumber.intValue());
-	    System.out.println("IDIV " + temp1 + " / " + temp2);
+	    System.out.println("IDIV " + val1 + " / " + val2);
 	  }
 		else if (instruction instanceof DADD)
 		{
 	    arithNumber = val1.doubleValue() + val2.doubleValue();
 	    cpgen.addDouble(arithNumber.doubleValue());
-	    System.out.println("DADD " + temp1 + " + " + temp2);
+	    System.out.println("DADD " + val1 + " + " + val2);
 	  }
 		else if (instruction instanceof DMUL)
 		{
 	    arithNumber = val1.doubleValue() * val2.doubleValue();
 	    cpgen.addDouble(arithNumber.doubleValue());
-	    System.out.println("DMUL " + temp1 + " * " + temp2);
+	    System.out.println("DMUL " +val1 + " * " + val2);
 	  }
 		else if (instruction instanceof DSUB)
 		{
 	    arithNumber = val1.doubleValue() - val2.doubleValue();
 	    cpgen.addDouble(arithNumber.doubleValue());
-	    System.out.println("DSUB " + temp1 + " - " + temp2);
+	    System.out.println("DSUB " + val1 + " - " + val2);
 	  }
 		else if (instruction instanceof DDIV)
 		{
 	    arithNumber = val1.doubleValue() / val2.doubleValue();
 	    cpgen.addDouble(arithNumber.doubleValue());
-	    System.out.println("DDIV " + temp1 + " / " + temp2);
+	    System.out.println("DDIV " + val1 + " / " + val2);
 	  }
 		else if (instruction instanceof FADD)
 		{
-	    arithNumber = val1.floatValue() + val2.floatValue()
+	    arithNumber = val1.floatValue() + val2.floatValue();
 	    cpgen.addFloat(arithNumber.floatValue());
-	    System.out.println("FADD " + temp1 + " + " + temp2);
+	    System.out.println("FADD " + val1 + " + " + val2);
 	  }
 		else if (instruction instanceof FMUL)
 		{
-	    arithNumber = val1.floatValue() * val2.floatValue()
+	    arithNumber = val1.floatValue() * val2.floatValue();
 	    cpgen.addFloat(arithNumber.floatValue());
-	    System.out.println("FMUL " + temp1 + " * " + temp2);
+	    System.out.println("FMUL " + val1 + " * " + val2);
 	  }
 		else if (instruction instanceof FSUB)
 		{
-	    arithNumber = val1.floatValue() - val2.floatValue()
+	    arithNumber = val1.floatValue() - val2.floatValue();
 	    cpgen.addFloat(arithNumber.floatValue());
-	    System.out.println("FSUB " + temp1 + " - " + temp2);
+	    System.out.println("FSUB " + val1 + " - " + val2);
 	  }
 		else if (instruction instanceof FDIV)
 		{
-	    arithNumber = val1.floatValue() / val2.floatValue()
+	    arithNumber = val1.floatValue() / val2.floatValue();
 	    cpgen.addFloat(arithNumber.floatValue());
-	    System.out.println("FDIV " + temp1 + " / " + temp2);
+	    System.out.println("FDIV " + val1 + " / " + val2);
 	  }
 		else if (instruction instanceof LADD)
 		{
-	    arithNumber = val1.longValue() + val2.longValue()
+	    arithNumber = val1.longValue() + val2.longValue();
 	    cpgen.addLong(arithNumber.longValue());
-	    System.out.println("LADD " + temp1 + " + " + temp2);
+	    System.out.println("LADD " + val1 + " + " + val2);
 	  }
 		else if (instruction instanceof LMUL)
 		{
-	    arithNumber = val1.longValue() * val2.longValue()
+	    arithNumber = val1.longValue() * val2.longValue();
 	    cpgen.addLong(arithNumber.longValue());
-	    System.out.println("LMUL " + temp1 + " * " + temp2);
+	    System.out.println("LMUL " + val1 + " * " + val2);
 	  }
 		else if (instruction instanceof LSUB)
 		{
-	    arithNumber = val1.longValue() - val2.longValue()
+	    arithNumber = val1.longValue() - val2.longValue();
 	    cpgen.addLong(arithNumber.longValue());
-	    System.out.println("LSUB " + temp1 + " - " + temp2);
+	    System.out.println("LSUB " + val1 + " - " + val2);
 	  }
 		else if (instruction instanceof LDIV)
 		{
-	    arithNumber = val1.longValue() / val2.longValue()
+	    arithNumber = val1.longValue() / val2.longValue();
 	    cpgen.addLong(arithNumber.longValue());
-	    System.out.println("LDIV " + temp1 + " / " + temp2);
+	    System.out.println("LDIV " + val1 + " / " + val2);
 	  }
 		instList.insert(handle,new LDC(cpgen.getSize() - 1));
 		return arithNumber;
