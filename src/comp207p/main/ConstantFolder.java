@@ -412,84 +412,84 @@ public class ConstantFolder
 		}
 
 
-	private class ForLoopHash
-	{
-		private HashMap<Integer, ArrayList<Integer>> forloophash;
-		public ForLoopHash(ForLoops flops)
+		private class ForLoopHash
 		{
-			forloophash = new HashMap<Integer, ArrayList<Integer>>();
-			ArrayList<int[]> flps = flops.flps;
-			for(int[] a : flps)
+			private HashMap<Integer, ArrayList<Integer>> forloophash;
+			public ForLoopHash(ForLoops flops)
 			{
-				ArrayList<Integer> temp1 = new ArrayList<Integer>();
-				ArrayList<Integer> temp2 = new ArrayList<Integer>();
-				temp1.add(-1);
-				temp2.add(-1);
-				forloophash.put(a[0],temp1);
-				forloophash.put(a[1],temp2);
-			}
-		}
-		public void printForlpHash()
-		{
-			// System.out.println("****************key = ");
-			for(Integer key: forloophash.keySet())
-			{
-				System.out.println(key);
-				for(Integer temp : forloophash.get(key))
+				forloophash = new HashMap<Integer, ArrayList<Integer>>();
+				ArrayList<int[]> flps = flops.flps;
+				for(int[] a : flps)
 				{
-					System.out.println(temp);
+					ArrayList<Integer> temp1 = new ArrayList<Integer>();
+					ArrayList<Integer> temp2 = new ArrayList<Integer>();
+					temp1.add(-1);
+					temp2.add(-1);
+					forloophash.put(a[0],temp1);
+					forloophash.put(a[1],temp2);
 				}
 			}
-		}
-		public boolean keyExists(Integer key)
-		{
-			return forloophash.containsKey(key);
-		}
-		public void addHash(Integer key, ArrayList<Integer> list)
-		{
-			forloophash.put(key,list);
-		}
-		public ArrayList<Integer> getList(Integer key)
-		{
-			return forloophash.get(key);
-		}
-
-	}
-
-	public ForLoopHash hashForLps(ForLoops flops)
-	{
-		ForLoops forloops = flops;
-		ForLoopHash forhash = new ForLoopHash(flops);
-		for(int[] a : forloops.flps)
-		{
-			Integer temp1 = a[0];
-			Integer temp2 = a[1];
-			for(int i = temp1; i< temp2; i++)
+			public void printForlpHash()
 			{
-				// System.out.println(i);
-				if(forhash.keyExists(i))
+				// System.out.println("****************key = ");
+				for(Integer key: forloophash.keySet())
 				{
-					System.out.println("keyexists");
-					System.out.println(i);
-					ArrayList<Integer> loadIndexes = forhash.getList(i);
-					if(loadIndexes.get(0) == -1)
+					System.out.println(key);
+					for(Integer temp : forloophash.get(key))
 					{
-						System.out.println("minus");
-						loadIndexes.add(a[2]);
-						loadIndexes.remove(0);
-						System.out.println(loadIndexes.get(0));
-					}else
-					{
-						loadIndexes.add(a[2]);
+						System.out.println(temp);
 					}
-					forhash.addHash(i,loadIndexes);
 				}
 			}
+			public boolean keyExists(Integer key)
+			{
+				return forloophash.containsKey(key);
+			}
+			public void addHash(Integer key, ArrayList<Integer> list)
+			{
+				forloophash.put(key,list);
+			}
+			public ArrayList<Integer> getList(Integer key)
+			{
+				return forloophash.get(key);
+			}
+
 		}
 
-		forhash.printForlpHash();
-		return forhash;
-	}
+		public ForLoopHash hashForLps(ForLoops flops)
+		{
+			ForLoops forloops = flops;
+			ForLoopHash forhash = new ForLoopHash(flops);
+			for(int[] a : forloops.flps)
+			{
+				Integer temp1 = a[0];
+				Integer temp2 = a[1];
+				for(int i = temp1; i< temp2; i++)
+				{
+					// System.out.println(i);
+					if(forhash.keyExists(i))
+					{
+						System.out.println("keyexists");
+						System.out.println(i);
+						ArrayList<Integer> loadIndexes = forhash.getList(i);
+						if(loadIndexes.get(0) == -1)
+						{
+							System.out.println("minus");
+							loadIndexes.add(a[2]);
+							loadIndexes.remove(0);
+							System.out.println(loadIndexes.get(0));
+						}else
+						{
+							loadIndexes.add(a[2]);
+						}
+						forhash.addHash(i,loadIndexes);
+					}
+				}
+			}
+
+			forhash.printForlpHash();
+			return forhash;
+		}
 
 
 
