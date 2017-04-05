@@ -275,12 +275,14 @@ public class ConstantFolder
 	}
 
 
-		private static class ForLoops{
+		private static class ForLoops
+		{
 			ArrayList<int[]> flps = new ArrayList<int[]>();
 			// private static ArrayList<Integer[]> flps = new ArrayList<Integer[]>();
 			public ForLoops()
 			{
 			}
+
 			public void addForLoop(int start, int end, int loadIndex)
 			{
 				int[] a = new int[3];
@@ -289,14 +291,17 @@ public class ConstantFolder
 				a[2] = loadIndex;
 				flps.add(a);
 			}
+
 			public boolean checkEmpty()
 			{
 				return flps.isEmpty();
 			}
+
 			public int getSize()
 			{
 				return flps.size();
 			}
+
 			public void printFor()
 			{
 				int[] a;
@@ -308,41 +313,40 @@ public class ConstantFolder
 						System.out.println(a[2]);
 				}
 			}
+
 			public boolean checkinForloop(int value) // checks if instruction index is inside the for loop
 			{
- 					int[] a;
- 					int start;
- 					int end;
- 					for(int j = 0; j<this.getSize(); j++)
- 					{
- 						a = flps.get(j);
-  					start = a[0];
-  					end = a[1];
-  					if((value >= start) && (value <= end))
-  					{
-  						return true;
-  					}
-  				}
-  				return false;
-  			}
+				int[] a;
+				int start;
+				int end;
+				for(int j = 0; j<this.getSize(); j++)
+				{
+					a = flps.get(j);
+					start = a[0];
+					end = a[1];
+					if((value >= start) && (value <= end))
+						return true;
+				}
+				return false;
+  		}
 		}
 
 		private int getLocalVariableIndex(InstructionList instList, int start)
-  		{
-  			for(InstructionHandle handle : instList.getInstructionHandles())
-  			{
-  				Instruction instruction = handle.getInstruction();
-  				if(handle.getPosition() == start)
-  				{
-  					System.out.println("load ----- ********");
-  					LoadInstruction loadInst = (LoadInstruction) instruction;
-  					int loadIndex = loadInst.getIndex();
-  					System.out.println("load --------- "+loadIndex);
-  					return loadIndex;
-  				}
-  			}
-  			return -1;
-  		}
+  	{
+			for(InstructionHandle handle : instList.getInstructionHandles())
+			{
+				Instruction instruction = handle.getInstruction();
+				if(handle.getPosition() == start)
+				{
+					System.out.println("load ----- ********");
+					LoadInstruction loadInst = (LoadInstruction) instruction;
+					int loadIndex = loadInst.getIndex();
+					System.out.println("load --------- "+loadIndex);
+					return loadIndex;
+				}
+			}
+			return -1;
+		}
 
 		private ForLoops firstMethod(ClassGen cgen, ConstantPoolGen cpgen, Method method)
 		{
