@@ -135,7 +135,7 @@ public class ConstantFolder
 	}
 
 
-	private Number arithmeticMethod(InstructionHandle handle, Instruction instruction, ConstantPoolGen cpgen, InstructionList instList, Number val1, Number val2)
+	private Number arithmeticMethod(InstructionHandle handle, Instruction instruction, ConstantPoolGen cpgen, InstructionList instList, Number val1, Number val2,int index)
 	{
 		// 0 for int, 1 for double, 2 for float and 3 for long.
 	  Number arithNumber = 0;
@@ -250,10 +250,14 @@ public class ConstantFolder
 	  }
 		// instList.insert(handle,new LDC(cpgen.getSize() - 1));
 		if((type == 0)||(type==2)) {
-			instList.getInstructionHandles()[0].setInstruction(new LDC(cpgen.getSize() - 1));
+			System.out.println("Type 0: "+index);
+			System.out.println(instList.getInstructionHandles()[index]);
+			instList.getInstructionHandles()[index].setInstruction(new LDC(cpgen.getSize() - 1));
+			System.out.println(instList.getInstructionHandles()[index]);
 		}
 		else {
-			instList.getInstructionHandles()[0].setInstruction(new LDC2_W(cpgen.getSize() - 1));
+			System.out.println("Type Other: "+index);
+			instList.getInstructionHandles()[index].setInstruction(new LDC2_W(cpgen.getSize() - 1));
 		}
 		return arithNumber;
 	}
@@ -382,19 +386,38 @@ public class ConstantFolder
 		}
 
 	private static class DeleteTable {
+			private ArrayList<ArrayList<Integer>> delete = new ArrayList<ArrayList<Integer>>();
 
+			public void add(int start, int end) {
+				ArrayList<Integer> temp = new ArrayList<Integer>();
+				temp.add(start);
+				temp.add(end);
+				delete.add(temp);
+			}
+
+			public int getSize() {
+				return delete.size();
+			}
+
+			public int getStart(int index) {
+				return delete.get(index).get(0);
+			}
+
+			public int getEnd(int index) {
+				return delete.get(index).get(1);
+			}
 	}
 
-	private DeleteTable secondMethod(ClassGen cgen, ConstantPoolGen cpgen, Method method, ForLoops forloops) {
+	private DeleteTable secondMethod( ConstantPoolGen cpgen, InstructionList instList,ForLoops forloops) {
 		System.out.println("second go");
-		Code methodCode = method.getCode();
-
-		// Now get the actualy bytecode data in byte array,
-		// and use it to initialise an InstructionList
-		InstructionList instList = new InstructionList(methodCode.getCode());
-
-		// Initialise a method generator with the original method as the baseline
-		MethodGen methodGen = new MethodGen(method.getAccessFlags(), method.getReturnType(), method.getArgumentTypes(), null, method.getName(), cgen.getClassName(), instList, cpgen);
+		// Code methodCode = method.getCode();
+		//
+		// // Now get the actualy bytecode data in byte array,
+		// // and use it to initialise an InstructionList
+		// InstructionList instList = new InstructionList(methodCode.getCode());
+		//
+		// // Initialise a method generator with the original method as the baseline
+		// MethodGen methodGen = new MethodGen(method.getAccessFlags(), method.getReturnType(), method.getArgumentTypes(), null, method.getName(), cgen.getClassName(), instList, cpgen);
 		Number temp1 = 0;
 		Number temp2 = 0;
 		LocalVariables lvt = new LocalVariables();
@@ -408,6 +431,11 @@ public class ConstantFolder
 			Instruction instruction = handle.getInstruction();
 			if(instruction instanceof LDC)
 			{
+				// deleteTable.add(2,3);
+				// System.out.println("WilliamLam");
+				// System.out.println(deleteTable.getSize());
+				// System.out.println(deleteTable.getStart(0));
+				// System.out.println(deleteTable.getEnd(0));
 				LDC l = (LDC) instruction;
 				System.out.println("LDC");
 				System.out.println(l.getValue(cpgen));
@@ -416,10 +444,11 @@ public class ConstantFolder
 				System.out.println("temp1="+temp1+" 2 = "+temp2);
 				System.out.println(handle);
 			}
-			else if((instruction instanceof INVOKEVIRTUAL)&&(instruction instanceof GETSTATIC) &&(instruction instanceof ReturnInstruction)) {
+			else if((instruction instanceof INVOKEVIRTUAL)||(instruction instanceof GETSTATIC)||(instruction instanceof ReturnInstruction)) {
+
 				replaceInstructionIndex++;
 			}
-			// else if() {
+			// else if(instruction instanceof ) {
 			//
 			// }
 			else if(handle.getInstruction() instanceof LDC2_W)
@@ -472,10 +501,23 @@ public class ConstantFolder
 			{
 				System.out.println("arith");
 				Number temp3 = temp2;
-				temp2 =	arithmeticMethod(handle, instruction, cpgen, instList, temp1, temp2); //handle IADD, DADD, ISUB etc
+				System.out.println(replaceInstructionIndex);
+				temp2 =	arithmeticMethod(handle, instruction, cpgen, instList, temp1, temp2, replaceInstructionIndex); //handle IADD, DADD, ISUB etc
 				temp1 = temp3;
 			}
 		}
+
+
+		// instList.setPositions(true);
+		//
+		// // set max stack/local
+		// methodGen.setMaxStack();
+		// methodGen.setMaxLocals();
+		//
+		// // generate the new method with replaced iconst
+		// Method nMethod = methodGen.getMethod();
+		// // replace the method in the original class
+		// cgen.replaceMethod(method, nMethod);
 		return deleteTable;
 	}
 
@@ -484,7 +526,7 @@ public class ConstantFolder
 	{
 		ForLoops forloops = firstMethod(cgen,cpgen,method);
 		forloops.printFor();
-		DeleteTable deleteTable = secondMethod(cgen, cpgen, method, forloops);
+
 		// Get the Code of the method, which is a collection of bytecode instructions
 		System.out.println(method.toString());
 		Code methodCode = method.getCode();
@@ -499,148 +541,149 @@ public class ConstantFolder
 		Number temp2 = 0;
 		LocalVariables lvt = new LocalVariables();
 		int type = 0;
+		DeleteTable deleteTable = secondMethod(cpgen, instList, forloops);
 		// InstructionHandle is a wrapper for actual Instructions
-		for (InstructionHandle handle : instList.getInstructionHandles())
-		{
-			System.out.println(handle);
-			System.out.println("check in for looop _________"+forloops.checkinForloop(handle.getPosition()));
-			Instruction instruction = handle.getInstruction();
-			if((instruction instanceof LDC)&&(handle.getPosition() != 0))
-			{
-				LDC l = (LDC) instruction;
-				System.out.println("LDC");
-				System.out.println(l.getValue(cpgen));
-				temp1 = temp2;
-				temp2 = (int)l.getValue(cpgen);
-				System.out.println("temp1="+temp1+" 2 = "+temp2);
-				System.out.println(handle);
-				// try{
-				// 	instList.delete(handle);
-				// }catch(TargetLostException e)
-				// {
-				// 	e.printStackTrace();
-				// }
-			}
-			else if(handle.getInstruction() instanceof LDC2_W)
-			{
-				LDC2_W l = (LDC2_W) handle.getInstruction();
-				System.out.println("LDC2_W");
-				System.out.println(l.getValue(cpgen));
-				temp1 = temp2;
-				temp2 = (Number)l.getValue(cpgen);
-			}
-			else if(instruction instanceof ConstantPushInstruction) //gets value for SIPUSH, BIPUSH etc
-			{
-				ConstantPushInstruction constPush = (ConstantPushInstruction) instruction;
-				System.out.println("push= "+(constPush.getValue()));
-				temp1 = temp2;
-				temp2 = constPush.getValue();
-				System.out.println("temp1 = "+temp1+"temp2 = "+temp2);
-				// if(handle.getPosition() != 0) {
-				// 	try{
-				// 		instList.delete(handle);
-				// 	}catch(TargetLostException e)
-				// 	{
-				// 		e.printStackTrace();
-				// 	}
-				// }
-			}else if(instruction instanceof StoreInstruction)
-			{
-				StoreInstruction a = (StoreInstruction) instruction;
-				System.out.println("storedINstruectino ------"+a.getIndex());
-				lvt.addVariable(a.getIndex(),temp2);
-				// if(handle.getPosition() != 0) {
-				// 	try{
-				// 		instList.delete(handle);
-				// 	}catch(TargetLostException e)
-				// 	{
-				// 		e.printStackTrace();
-				// 	}
-				// }
-				// try{
-				// 	instList.delete(handle);
-				// }catch(TargetLostException e)
-				// {
-				// 	e.printStackTrace();
-				// }
-			}
-				else if(instruction instanceof LoadInstruction) //need to load value here
-			{
-				LoadInstruction loadInst = (LoadInstruction) instruction;
-				System.out.println("load --------- "+loadInst.getIndex());
-				temp1 = temp2;
-				temp2 = lvt.getVariable(loadInst.getIndex());
-				System.out.println("temp1 = "+temp1+" "+temp2);
-				// try{
-				// 	instList.delete(handle);
-				// }catch(TargetLostException e)
-				// {
-				// 	e.printStackTrace();
-				// }
-				// if(handle.getPosition() != 0) {
-					// try{
-					// 	instList.delete(handle);
-					// }catch(TargetLostException e)
-					// {
-					// 	e.printStackTrace();
-					// }
-				// 	}
-				// }
-			}
-			else if((instruction instanceof IfInstruction)&&(temp1!=null)&&(temp2!=null)) {
-				System.out.println("if");
-				boolean answer = condition(handle, instruction, cpgen, instList, temp1, temp2, type);
-				System.out.println(answer);
-				// if(handle.getPosition() != 0) {
-				// 	try{
-				// 		instList.delete(handle);
-				// 	}catch(TargetLostException e)
-				// 	{
-				// 		e.printStackTrace();
-				// 	}
-				// }
-			}
-			else if(instruction instanceof LCMP) {
-				System.out.println("LCMP");
-				type = 1;
-			}
-			else if((instruction instanceof DCMPG)||(instruction instanceof DCMPL)) {
-				type = 2;
-			}
-			else if((instruction instanceof FCMPG)||(instruction instanceof FCMPL))
-			{
-				type = 3;
-			}
-			// else if(instruction instanceof ConversionInstruction) {
-			// 	 System.out.println("convert");
-			// 	//  temp1 = temp2;
-			// 	 temp2 = convert(handle, instruction, cpgen, instList, temp2);
-			//
-			// }
-			else if(instruction instanceof ArithmeticInstruction)
-			{
-				System.out.println("arith");
-				Number temp3 = temp2;
-				temp2 =	arithmeticMethod(handle, instruction, cpgen, instList, temp1, temp2); //handle IADD, DADD, ISUB etc
-				temp1 = temp3;
-				try
-				{
-					instList.delete(handle);
-				}catch(TargetLostException e)
-				{
-					e.printStackTrace();
-				}
-			}
-			else if(instruction instanceof ConversionInstruction) {
-				try
-				{
-					instList.delete(handle);
-				}catch(TargetLostException e)
-				{
-					e.printStackTrace();
-				}
-			}
-		}
+		// for (InstructionHandle handle : instList.getInstructionHandles())
+		// {
+		// 	System.out.println(handle);
+		// 	System.out.println("check in for looop _________"+forloops.checkinForloop(handle.getPosition()));
+		// 	Instruction instruction = handle.getInstruction();
+		// 	if((instruction instanceof LDC)&&(handle.getPosition() != 0))
+		// 	{
+		// 		LDC l = (LDC) instruction;
+		// 		System.out.println("LDC");
+		// 		System.out.println(l.getValue(cpgen));
+		// 		temp1 = temp2;
+		// 		temp2 = (int)l.getValue(cpgen);
+		// 		System.out.println("temp1="+temp1+" 2 = "+temp2);
+		// 		System.out.println(handle);
+		// 		// try{
+		// 		// 	instList.delete(handle);
+		// 		// }catch(TargetLostException e)
+		// 		// {
+		// 		// 	e.printStackTrace();
+		// 		// }
+		// 	}
+		// 	else if(handle.getInstruction() instanceof LDC2_W)
+		// 	{
+		// 		LDC2_W l = (LDC2_W) handle.getInstruction();
+		// 		System.out.println("LDC2_W");
+		// 		System.out.println(l.getValue(cpgen));
+		// 		temp1 = temp2;
+		// 		temp2 = (Number)l.getValue(cpgen);
+		// 	}
+		// 	else if(instruction instanceof ConstantPushInstruction) //gets value for SIPUSH, BIPUSH etc
+		// 	{
+		// 		ConstantPushInstruction constPush = (ConstantPushInstruction) instruction;
+		// 		System.out.println("push= "+(constPush.getValue()));
+		// 		temp1 = temp2;
+		// 		temp2 = constPush.getValue();
+		// 		System.out.println("temp1 = "+temp1+"temp2 = "+temp2);
+		// 		// if(handle.getPosition() != 0) {
+		// 		// 	try{
+		// 		// 		instList.delete(handle);
+		// 		// 	}catch(TargetLostException e)
+		// 		// 	{
+		// 		// 		e.printStackTrace();
+		// 		// 	}
+		// 		// }
+		// 	}else if(instruction instanceof StoreInstruction)
+		// 	{
+		// 		StoreInstruction a = (StoreInstruction) instruction;
+		// 		System.out.println("storedINstruectino ------"+a.getIndex());
+		// 		lvt.addVariable(a.getIndex(),temp2);
+		// 		// if(handle.getPosition() != 0) {
+		// 		// 	try{
+		// 		// 		instList.delete(handle);
+		// 		// 	}catch(TargetLostException e)
+		// 		// 	{
+		// 		// 		e.printStackTrace();
+		// 		// 	}
+		// 		// }
+		// 		// try{
+		// 		// 	instList.delete(handle);
+		// 		// }catch(TargetLostException e)
+		// 		// {
+		// 		// 	e.printStackTrace();
+		// 		// }
+		// 	}
+		// 		else if(instruction instanceof LoadInstruction) //need to load value here
+		// 	{
+		// 		LoadInstruction loadInst = (LoadInstruction) instruction;
+		// 		System.out.println("load --------- "+loadInst.getIndex());
+		// 		temp1 = temp2;
+		// 		temp2 = lvt.getVariable(loadInst.getIndex());
+		// 		System.out.println("temp1 = "+temp1+" "+temp2);
+		// 		// try{
+		// 		// 	instList.delete(handle);
+		// 		// }catch(TargetLostException e)
+		// 		// {
+		// 		// 	e.printStackTrace();
+		// 		// }
+		// 		// if(handle.getPosition() != 0) {
+		// 			// try{
+		// 			// 	instList.delete(handle);
+		// 			// }catch(TargetLostException e)
+		// 			// {
+		// 			// 	e.printStackTrace();
+		// 			// }
+		// 		// 	}
+		// 		// }
+		// 	}
+		// 	else if((instruction instanceof IfInstruction)&&(temp1!=null)&&(temp2!=null)) {
+		// 		System.out.println("if");
+		// 		boolean answer = condition(handle, instruction, cpgen, instList, temp1, temp2, type);
+		// 		System.out.println(answer);
+		// 		// if(handle.getPosition() != 0) {
+		// 		// 	try{
+		// 		// 		instList.delete(handle);
+		// 		// 	}catch(TargetLostException e)
+		// 		// 	{
+		// 		// 		e.printStackTrace();
+		// 		// 	}
+		// 		// }
+		// 	}
+		// 	else if(instruction instanceof LCMP) {
+		// 		System.out.println("LCMP");
+		// 		type = 1;
+		// 	}
+		// 	else if((instruction instanceof DCMPG)||(instruction instanceof DCMPL)) {
+		// 		type = 2;
+		// 	}
+		// 	else if((instruction instanceof FCMPG)||(instruction instanceof FCMPL))
+		// 	{
+		// 		type = 3;
+		// 	}
+		// 	// else if(instruction instanceof ConversionInstruction) {
+		// 	// 	 System.out.println("convert");
+		// 	// 	//  temp1 = temp2;
+		// 	// 	 temp2 = convert(handle, instruction, cpgen, instList, temp2);
+		// 	//
+		// 	// }
+		// 	else if(instruction instanceof ArithmeticInstruction)
+		// 	{
+		// 		System.out.println("arith");
+		// 		Number temp3 = temp2;
+		// 		temp2 =	arithmeticMethod(handle, instruction, cpgen, instList, temp1, temp2); //handle IADD, DADD, ISUB etc
+		// 		temp1 = temp3;
+		// 		try
+		// 		{
+		// 			instList.delete(handle);
+		// 		}catch(TargetLostException e)
+		// 		{
+		// 			e.printStackTrace();
+		// 		}
+		// 	}
+		// 	else if(instruction instanceof ConversionInstruction) {
+		// 		try
+		// 		{
+		// 			instList.delete(handle);
+		// 		}catch(TargetLostException e)
+		// 		{
+		// 			e.printStackTrace();
+		// 		}
+		// 	}
+		// }
 		instList.setPositions(true);
 
 		// set max stack/local
