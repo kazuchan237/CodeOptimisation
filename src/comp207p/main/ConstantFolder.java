@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.HashMap;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 
 import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.Code;
@@ -50,6 +51,7 @@ public class ConstantFolder
 	private boolean condition(InstructionHandle handle, Instruction instruction, ConstantPoolGen cpgen, InstructionList instList, Number temp, Number temp3, int type)
 	{
 			// long temp1 = temp.longValue();
+			System.out.println("====================sfdljsfjlskfjslfklsklfjsd");
 		BigDecimal temp2;
 		BigDecimal temp1;
 		if(type == 1) {
@@ -71,6 +73,7 @@ public class ConstantFolder
 
 		System.out.println(temp2);
 		System.out.println(temp1);
+		System.out.println("====================sfdljsfjlskfjslfklsklfjsd");
 		if((instruction instanceof IF_ICMPLE)||(instruction instanceof IFLE))
 		{
 			System.out.println("IFLE");
@@ -90,8 +93,10 @@ public class ConstantFolder
 		}
 		else if((instruction instanceof IF_ICMPGE)||(instruction instanceof IFGE))
 		{
+			System.out.println("====================sfdljsfjlskfjslfklsklfjsd");
    		if(temp2.compareTo(temp1) == 1)
 			{
+				System.out.println("====================sfdljsfjlskfjslfklsklfjsd");
 				return true;
 			}
 		}
@@ -249,9 +254,77 @@ public class ConstantFolder
 		}
 	}
 
+
+		private static class ForLoops{
+			ArrayList<int[]> flps = new ArrayList<int[]>();
+			// private static ArrayList<Integer[]> flps = new ArrayList<Integer[]>();
+			public ForLoops()
+			{
+			}
+			public void addForLoop(int start, int end)
+			{
+				int[] a = new int[2];
+				a[0] = start;
+				a[1] = end;
+				flps.add(a);
+			}
+			public boolean checkEmpty()
+			{
+				return flps.isEmpty();
+			}
+			public int getSize()
+			{
+				return flps.size();
+			}
+			public void printFor()
+			{
+				int b = flps.size();
+				System.out.println(b);
+				int[] a = flps.get(0);
+				System.out.println(a[0]);
+				System.out.println(a[1]);
+				for(int j = 0; j<b; j++)
+				{
+
+				}
+			}
+		}
+
+		private ForLoops firstMethod(ClassGen cgen, ConstantPoolGen cpgen, Method method)
+		{
+			System.out.println("first go");
+			System.out.println(method.toString());
+			Code methodCode = method.getCode();
+			InstructionList instList = new InstructionList(methodCode.getCode());
+			MethodGen methodGen = new MethodGen(method.getAccessFlags(), method.getReturnType(), method.getArgumentTypes(), null, method.getName(), cgen.getClassName(), instList, cpgen);
+			ForLoops forloops = new ForLoops();
+
+			for(InstructionHandle handle : instList.getInstructionHandles())
+			{
+				Instruction instruction = handle.getInstruction();
+				if(instruction instanceof GotoInstruction)
+				{
+					System.out.println("GOTO_)_____");
+					GotoInstruction goTo = (GotoInstruction) instruction;
+					Integer start = goTo.getTarget().getPosition();
+					Integer end = handle.getPosition();
+					if(start<end)
+					{
+						System.out.println("FirstCheck------------------FOR LOOOOOOOOOOOOOOOP___________-------*******************");
+						System.out.println("start = "+start);
+						System.out.println("end = "+end);
+						forloops.addForLoop(start,end);
+						forloops.printFor(); 
+					}
+				}
+			}
+			return forloops;
+		}
+
 	// we rewrite integer constants with 5 :)
 	private void optimizeMethod(ClassGen cgen, ConstantPoolGen cpgen, Method method)
 	{
+		ForLoops forlps = firstMethod(cgen,cpgen,method);
 		// Get the Code of the method, which is a collection of bytecode instructions
 		System.out.println(method.toString());
 		Code methodCode = method.getCode();
@@ -316,7 +389,7 @@ public class ConstantFolder
 				temp2 = lvt.getVariable(loadInst.getIndex());
 				System.out.println("temp1 = "+temp1+" "+temp2);
 			}
-			else if(instruction instanceof IfInstruction) {
+			else if((instruction instanceof IfInstruction)&&(temp1!=null)&&(temp2!=null)) {
 				System.out.println("if");
 				boolean answer = condition(handle, instruction, cpgen, instList, temp1, temp2, type);
 				System.out.println(answer);
