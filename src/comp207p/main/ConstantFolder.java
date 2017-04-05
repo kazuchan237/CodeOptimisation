@@ -281,11 +281,12 @@ public class ConstantFolder
 			public ForLoops()
 			{
 			}
-			public void addForLoop(int start, int end)
+			public void addForLoop(int start, int end, int loadIndex)
 			{
-				int[] a = new int[2];
+				int[] a = new int[3];
 				a[0] = start;
 				a[1] = end;
+				a[2] = loadIndex;
 				flps.add(a);
 			}
 			public boolean checkEmpty()
@@ -298,17 +299,50 @@ public class ConstantFolder
 			}
 			public void printFor()
 			{
-				int b = flps.size();
-				System.out.println(b);
-				int[] a = flps.get(0);
-				System.out.println(a[0]);
-				System.out.println(a[1]);
-				for(int j = 0; j<b; j++)
+				int[] a;
+				for(int j = 0; j<getSize(); j++)
 				{
-
+						a = flps.get(0);
+						System.out.println(a[0]);
+						System.out.println(a[1]);
+						System.out.println(a[2]);
 				}
 			}
+			public boolean checkinForloop(int value) // checks if instruction index is inside the for loop
+			{
+ 					int[] a;
+ 					int start;
+ 					int end;
+ 					for(int j = 0; j<this.getSize(); j++)
+ 					{
+ 						a = flps.get(j);
+  					start = a[0];
+  					end = a[1];
+  					if((value >= start) && (value <= end))
+  					{
+  						return true;
+  					}
+  				}
+  				return false;
+  			}
 		}
+
+		private int getLocalVariableIndex(InstructionList instList, int start)
+  		{
+  			for(InstructionHandle handle : instList.getInstructionHandles())
+  			{
+  				Instruction instruction = handle.getInstruction();
+  				if(handle.getPosition() == start)
+  				{
+  					System.out.println("load ----- ********");
+  					LoadInstruction loadInst = (LoadInstruction) instruction;
+  					int loadIndex = loadInst.getIndex();
+  					System.out.println("load --------- "+loadIndex);
+  					return loadIndex;
+  				}
+  			}
+  			return -1;
+  		}
 
 		private ForLoops firstMethod(ClassGen cgen, ConstantPoolGen cpgen, Method method)
 		{
@@ -330,11 +364,13 @@ public class ConstantFolder
 					Integer end = handle.getPosition();
 					if(start<end)
 					{
+						int loadIndex = getLocalVariableIndex(instList,start);
+ 						System.out.println("what is localindesx"+loadIndex);
 						System.out.println("FirstCheck------------------FOR LOOOOOOOOOOOOOOOP___________-------*******************");
 						System.out.println("start = "+start);
 						System.out.println("end = "+end);
-						forloops.addForLoop(start,end);
-						forloops.printFor();
+						forloops.addForLoop(start,end,loadIndex);
+ 						forloops.printFor();
 					}
 				}
 			}
@@ -442,8 +478,9 @@ public class ConstantFolder
 	// we rewrite integer constants with 5 :)
 	private void optimizeMethod(ClassGen cgen, ConstantPoolGen cpgen, Method method)
 	{
-		ForLoops forlps = firstMethod(cgen,cpgen,method);
-		DeleteTable deleteTable = secondMethod(cgen, cpgen, method, forlps);
+		ForLoops forloops = firstMethod(cgen,cpgen,method);
+		forloops.printFor();
+		DeleteTable deleteTable = secondMethod(cgen, cpgen, method, forloops);
 		// Get the Code of the method, which is a collection of bytecode instructions
 		System.out.println(method.toString());
 		Code methodCode = method.getCode();
@@ -462,6 +499,7 @@ public class ConstantFolder
 		for (InstructionHandle handle : instList.getInstructionHandles())
 		{
 			System.out.println(handle);
+			System.out.println("check in for looop _________"+forloops.checkinForloop(handle.getPosition()));
 			Instruction instruction = handle.getInstruction();
 			if((instruction instanceof LDC)&&(handle.getPosition() != 0))
 			{
