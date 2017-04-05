@@ -73,7 +73,7 @@ public class ConstantFolder
 
 		System.out.println(temp2);
 		System.out.println(temp1);
-		// System.out.println("====================sfdljsfjlskfjslfklsklfjsd");
+		System.out.println("====================sfdljsfjlskfjslfklsklfjsd");
 		if((instruction instanceof IF_ICMPLE)||(instruction instanceof IFLE))
 		{
 			System.out.println("IFLE");
@@ -93,10 +93,10 @@ public class ConstantFolder
 		}
 		else if((instruction instanceof IF_ICMPGE)||(instruction instanceof IFGE))
 		{
-			// System.out.println("====================sfdljsfjlskfjslfklsklfjsd");
+			System.out.println("====================sfdljsfjlskfjslfklsklfjsd");
    		if(temp2.compareTo(temp1) == 1)
 			{
-				// System.out.println("====================sfdljsfjlskfjslfklsklfjsd");
+				System.out.println("====================sfdljsfjlskfjslfklsklfjsd");
 				return true;
 			}
 		}
@@ -249,7 +249,12 @@ public class ConstantFolder
 			type = 3;
 	  }
 		// instList.insert(handle,new LDC(cpgen.getSize() - 1));
-		instList.getInstructionHandles()[0].setInstruction(new LDC(cpgen.getSize() - 1));
+		if((type == 0)||(type==2)) {
+			instList.getInstructionHandles()[0].setInstruction(new LDC(cpgen.getSize() - 1));
+		}
+		else {
+			instList.getInstructionHandles()[0].setInstruction(new LDC2_W(cpgen.getSize() - 1));
+		}
 		return arithNumber;
 	}
 
@@ -276,12 +281,11 @@ public class ConstantFolder
 			public ForLoops()
 			{
 			}
-			public void addForLoop(int start, int end, int loadIndex)
+			public void addForLoop(int start, int end)
 			{
-				int[] a = new int[3];
+				int[] a = new int[2];
 				a[0] = start;
 				a[1] = end;
-				a[2] = loadIndex;
 				flps.add(a);
 			}
 			public boolean checkEmpty()
@@ -296,50 +300,14 @@ public class ConstantFolder
 			{
 				int b = flps.size();
 				System.out.println(b);
-				// int[] a = flps.get(0);
-				int[] a;
+				int[] a = flps.get(0);
+				System.out.println(a[0]);
+				System.out.println(a[1]);
 				for(int j = 0; j<b; j++)
 				{
-					a = flps.get(0);
-					System.out.println(a[0]);
-					System.out.println(a[1]);
-					System.out.println(a[2]);
-				}
-			}
-			public boolean checkinForloop(int value) // checks if instruction index is inside the for loop
-			{
-				int[] a;
-				int start;
-				int end;
-				for(int j = 0; j<this.getSize(); j++)
-				{
-					a = flps.get(j);
-					start = a[0];
-					end = a[1];
-					if((value >= start) && (value <= end))
-					{
-						return true;
-					}
-				}
-				return false;
-			}
-		}
 
-		private int getLocalVariableIndex(InstructionList instList, int start)
-		{
-			for(InstructionHandle handle : instList.getInstructionHandles())
-			{
-				Instruction instruction = handle.getInstruction();
-				if(handle.getPosition() == start)
-				{
-					System.out.println("load ----- ********");
-					LoadInstruction loadInst = (LoadInstruction) instruction;
-					int loadIndex = loadInst.getIndex();
-					System.out.println("load --------- "+loadIndex);
-					return loadIndex;
 				}
 			}
-			return -1;
 		}
 
 		private ForLoops firstMethod(ClassGen cgen, ConstantPoolGen cpgen, Method method)
@@ -360,15 +328,12 @@ public class ConstantFolder
 					GotoInstruction goTo = (GotoInstruction) instruction;
 					Integer start = goTo.getTarget().getPosition();
 					Integer end = handle.getPosition();
-
-					if(start<end) // for loop
+					if(start<end)
 					{
-						int loadIndex = getLocalVariableIndex(instList,start);
-						System.out.println("what is localindesx"+loadIndex);
 						System.out.println("FirstCheck------------------FOR LOOOOOOOOOOOOOOOP___________-------*******************");
 						System.out.println("start = "+start);
 						System.out.println("end = "+end);
-						forloops.addForLoop(start,end,loadIndex);
+						forloops.addForLoop(start,end);
 						forloops.printFor();
 					}
 				}
@@ -414,9 +379,9 @@ public class ConstantFolder
 			else if((instruction instanceof INVOKEVIRTUAL)&&(instruction instanceof GETSTATIC) &&(instruction instanceof ReturnInstruction)) {
 				replaceInstructionIndex++;
 			}
-			else if() {
-
-			}
+			// else if() {
+			//
+			// }
 			else if(handle.getInstruction() instanceof LDC2_W)
 			{
 				LDC2_W l = (LDC2_W) handle.getInstruction();
@@ -477,9 +442,8 @@ public class ConstantFolder
 	// we rewrite integer constants with 5 :)
 	private void optimizeMethod(ClassGen cgen, ConstantPoolGen cpgen, Method method)
 	{
-		ForLoops forloops = firstMethod(cgen,cpgen,method);
-		forloops.printFor();
-		DeleteTable deleteTable = secondMethod(cgen, cpgen, method, forloops);
+		ForLoops forlps = firstMethod(cgen,cpgen,method);
+		DeleteTable deleteTable = secondMethod(cgen, cpgen, method, forlps);
 		// Get the Code of the method, which is a collection of bytecode instructions
 		System.out.println(method.toString());
 		Code methodCode = method.getCode();
@@ -499,7 +463,6 @@ public class ConstantFolder
 		{
 			System.out.println(handle);
 			Instruction instruction = handle.getInstruction();
-			System.out.println("check in for looop _________"+forloops.checkinForloop(handle.getPosition()));
 			if((instruction instanceof LDC)&&(handle.getPosition() != 0))
 			{
 				LDC l = (LDC) instruction;
@@ -531,27 +494,27 @@ public class ConstantFolder
 				temp1 = temp2;
 				temp2 = constPush.getValue();
 				System.out.println("temp1 = "+temp1+"temp2 = "+temp2);
-				if(handle.getPosition() != 0) {
-					try{
-						instList.delete(handle);
-					}catch(TargetLostException e)
-					{
-						e.printStackTrace();
-					}
-				}
+				// if(handle.getPosition() != 0) {
+				// 	try{
+				// 		instList.delete(handle);
+				// 	}catch(TargetLostException e)
+				// 	{
+				// 		e.printStackTrace();
+				// 	}
+				// }
 			}else if(instruction instanceof StoreInstruction)
 			{
 				StoreInstruction a = (StoreInstruction) instruction;
 				System.out.println("storedINstruectino ------"+a.getIndex());
 				lvt.addVariable(a.getIndex(),temp2);
-				if(handle.getPosition() != 0) {
-					try{
-						instList.delete(handle);
-					}catch(TargetLostException e)
-					{
-						e.printStackTrace();
-					}
-				}
+				// if(handle.getPosition() != 0) {
+				// 	try{
+				// 		instList.delete(handle);
+				// 	}catch(TargetLostException e)
+				// 	{
+				// 		e.printStackTrace();
+				// 	}
+				// }
 				// try{
 				// 	instList.delete(handle);
 				// }catch(TargetLostException e)
@@ -573,12 +536,12 @@ public class ConstantFolder
 				// 	e.printStackTrace();
 				// }
 				// if(handle.getPosition() != 0) {
-					try{
-						instList.delete(handle);
-					}catch(TargetLostException e)
-					{
-						e.printStackTrace();
-					}
+					// try{
+					// 	instList.delete(handle);
+					// }catch(TargetLostException e)
+					// {
+					// 	e.printStackTrace();
+					// }
 				// 	}
 				// }
 			}
@@ -586,14 +549,14 @@ public class ConstantFolder
 				System.out.println("if");
 				boolean answer = condition(handle, instruction, cpgen, instList, temp1, temp2, type);
 				System.out.println(answer);
-				if(handle.getPosition() != 0) {
-					try{
-						instList.delete(handle);
-					}catch(TargetLostException e)
-					{
-						e.printStackTrace();
-					}
-				}
+				// if(handle.getPosition() != 0) {
+				// 	try{
+				// 		instList.delete(handle);
+				// 	}catch(TargetLostException e)
+				// 	{
+				// 		e.printStackTrace();
+				// 	}
+				// }
 			}
 			else if(instruction instanceof LCMP) {
 				System.out.println("LCMP");
