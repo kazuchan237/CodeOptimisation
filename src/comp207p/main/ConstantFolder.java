@@ -137,7 +137,9 @@ public class ConstantFolder
 
 	private Number arithmeticMethod(InstructionHandle handle, Instruction instruction, ConstantPoolGen cpgen, InstructionList instList, Number val1, Number val2)
 	{
+		// 0 for int, 1 for double, 2 for float and 3 for long.
 	  Number arithNumber = 0;
+		int type = 0;
 	  if (instruction instanceof IADD)
 		{
 	    arithNumber = val1.intValue() + val2.intValue();
@@ -167,74 +169,87 @@ public class ConstantFolder
 	    arithNumber = val1.doubleValue() + val2.doubleValue();
 	    cpgen.addDouble(arithNumber.doubleValue());
 	    System.out.println("DADD " + val1 + " + " + val2);
+			type = 1;
 	  }
 		else if (instruction instanceof DMUL)
 		{
 	    arithNumber = val1.doubleValue() * val2.doubleValue();
 	    cpgen.addDouble(arithNumber.doubleValue());
 	    System.out.println("DMUL " +val1 + " * " + val2);
+			type = 1;
 	  }
 		else if (instruction instanceof DSUB)
 		{
 	    arithNumber = val1.doubleValue() - val2.doubleValue();
 	    cpgen.addDouble(arithNumber.doubleValue());
 	    System.out.println("DSUB " + val1 + " - " + val2);
+			type = 1;
 	  }
 		else if (instruction instanceof DDIV)
 		{
 	    arithNumber = val1.doubleValue() / val2.doubleValue();
 	    cpgen.addDouble(arithNumber.doubleValue());
 	    System.out.println("DDIV " + val1 + " / " + val2);
+			type = 1;
 	  }
 		else if (instruction instanceof FADD)
 		{
 	    arithNumber = val1.floatValue() + val2.floatValue();
 	    cpgen.addFloat(arithNumber.floatValue());
 	    System.out.println("FADD " + val1 + " + " + val2);
+			type = 2;
 	  }
 		else if (instruction instanceof FMUL)
 		{
 	    arithNumber = val1.floatValue() * val2.floatValue();
 	    cpgen.addFloat(arithNumber.floatValue());
 	    System.out.println("FMUL " + val1 + " * " + val2);
+			type = 2;
 	  }
 		else if (instruction instanceof FSUB)
 		{
 	    arithNumber = val1.floatValue() - val2.floatValue();
 	    cpgen.addFloat(arithNumber.floatValue());
 	    System.out.println("FSUB " + val1 + " - " + val2);
+			type = 2;
 	  }
 		else if (instruction instanceof FDIV)
 		{
 	    arithNumber = val1.floatValue() / val2.floatValue();
 	    cpgen.addFloat(arithNumber.floatValue());
 	    System.out.println("FDIV " + val1 + " / " + val2);
+			type = 2;
 	  }
 		else if (instruction instanceof LADD)
 		{
 	    arithNumber = val1.longValue() + val2.longValue();
 	    cpgen.addLong(arithNumber.longValue());
 	    System.out.println("LADD " + val1 + " + " + val2);
+			type = 3;
 	  }
 		else if (instruction instanceof LMUL)
 		{
 	    arithNumber = val1.longValue() * val2.longValue();
 	    cpgen.addLong(arithNumber.longValue());
 	    System.out.println("LMUL " + val1 + " * " + val2);
+			type = 3;
 	  }
 		else if (instruction instanceof LSUB)
 		{
 	    arithNumber = val1.longValue() - val2.longValue();
 	    cpgen.addLong(arithNumber.longValue());
 	    System.out.println("LSUB " + val1 + " - " + val2);
+			type = 3;
 	  }
 		else if (instruction instanceof LDIV)
 		{
 	    arithNumber = val1.longValue() / val2.longValue();
 	    cpgen.addLong(arithNumber.longValue());
 	    System.out.println("LDIV " + val1 + " / " + val2);
+			type = 3;
 	  }
-		instList.insert(handle,new LDC(cpgen.getSize() - 1));
+		// instList.insert(handle,new LDC(cpgen.getSize() - 1));
+		instList.getInstructionHandles()[0].setInstruction(new LDC(cpgen.getSize() - 1));
 		return arithNumber;
 	}
 
@@ -361,13 +376,12 @@ public class ConstantFolder
 			return forloops;
 		}
 
-	// we rewrite integer constants with 5 :)
-	private void optimizeMethod(ClassGen cgen, ConstantPoolGen cpgen, Method method)
-	{
-		ForLoops forloops = firstMethod(cgen,cpgen,method);
-		forloops.printFor(); 
-		// Get the Code of the method, which is a collection of bytecode instructions
-		System.out.println(method.toString());
+	private static class DeleteTable {
+
+	}
+
+	private DeleteTable secondMethod(ClassGen cgen, ConstantPoolGen cpgen, Method method, ForLoops forloops) {
+		System.out.println("second go");
 		Code methodCode = method.getCode();
 
 		// Now get the actualy bytecode data in byte array,
@@ -380,13 +394,14 @@ public class ConstantFolder
 		Number temp2 = 0;
 		LocalVariables lvt = new LocalVariables();
 		int type = 0;
+		DeleteTable deleteTable = new DeleteTable();
+		int replaceInstructionIndex = 0;
 		// InstructionHandle is a wrapper for actual Instructions
 		for (InstructionHandle handle : instList.getInstructionHandles())
 		{
 			System.out.println(handle);
 			Instruction instruction = handle.getInstruction();
-			System.out.println("check in for looop _________"+forloops.checkinForloop(handle.getPosition()));
-			if((instruction instanceof LDC)&&(handle.getPosition() != 0))
+			if(instruction instanceof LDC)
 			{
 				LDC l = (LDC) instruction;
 				System.out.println("LDC");
@@ -395,12 +410,12 @@ public class ConstantFolder
 				temp2 = (int)l.getValue(cpgen);
 				System.out.println("temp1="+temp1+" 2 = "+temp2);
 				System.out.println(handle);
-				try{
-					instList.delete(handle);
-				}catch(TargetLostException e)
-				{
-					e.printStackTrace();
-				}
+			}
+			else if((instruction instanceof INVOKEVIRTUAL)&&(instruction instanceof GETSTATIC) &&(instruction instanceof ReturnInstruction)) {
+				replaceInstructionIndex++;
+			}
+			else if() {
+
 			}
 			else if(handle.getInstruction() instanceof LDC2_W)
 			{
@@ -417,6 +432,7 @@ public class ConstantFolder
 				temp1 = temp2;
 				temp2 = constPush.getValue();
 				System.out.println("temp1 = "+temp1+"temp2 = "+temp2);
+
 			}else if(instruction instanceof StoreInstruction)
 			{
 				StoreInstruction a = (StoreInstruction) instruction;
@@ -447,6 +463,149 @@ public class ConstantFolder
 			{
 				type = 3;
 			}
+			else if(instruction instanceof ArithmeticInstruction)
+			{
+				System.out.println("arith");
+				Number temp3 = temp2;
+				temp2 =	arithmeticMethod(handle, instruction, cpgen, instList, temp1, temp2); //handle IADD, DADD, ISUB etc
+				temp1 = temp3;
+			}
+		}
+		return deleteTable;
+	}
+
+	// we rewrite integer constants with 5 :)
+	private void optimizeMethod(ClassGen cgen, ConstantPoolGen cpgen, Method method)
+	{
+		ForLoops forloops = firstMethod(cgen,cpgen,method);
+		forloops.printFor();
+		DeleteTable deleteTable = secondMethod(cgen, cpgen, method, forloops);
+		// Get the Code of the method, which is a collection of bytecode instructions
+		System.out.println(method.toString());
+		Code methodCode = method.getCode();
+
+		// Now get the actualy bytecode data in byte array,
+		// and use it to initialise an InstructionList
+		InstructionList instList = new InstructionList(methodCode.getCode());
+
+		// Initialise a method generator with the original method as the baseline
+		MethodGen methodGen = new MethodGen(method.getAccessFlags(), method.getReturnType(), method.getArgumentTypes(), null, method.getName(), cgen.getClassName(), instList, cpgen);
+		Number temp1 = 0;
+		Number temp2 = 0;
+		LocalVariables lvt = new LocalVariables();
+		int type = 0;
+		// InstructionHandle is a wrapper for actual Instructions
+		for (InstructionHandle handle : instList.getInstructionHandles())
+		{
+			System.out.println(handle);
+			Instruction instruction = handle.getInstruction();
+			System.out.println("check in for looop _________"+forloops.checkinForloop(handle.getPosition()));
+			if((instruction instanceof LDC)&&(handle.getPosition() != 0))
+			{
+				LDC l = (LDC) instruction;
+				System.out.println("LDC");
+				System.out.println(l.getValue(cpgen));
+				temp1 = temp2;
+				temp2 = (int)l.getValue(cpgen);
+				System.out.println("temp1="+temp1+" 2 = "+temp2);
+				System.out.println(handle);
+				// try{
+				// 	instList.delete(handle);
+				// }catch(TargetLostException e)
+				// {
+				// 	e.printStackTrace();
+				// }
+			}
+			else if(handle.getInstruction() instanceof LDC2_W)
+			{
+				LDC2_W l = (LDC2_W) handle.getInstruction();
+				System.out.println("LDC2_W");
+				System.out.println(l.getValue(cpgen));
+				temp1 = temp2;
+				temp2 = (Number)l.getValue(cpgen);
+			}
+			else if(instruction instanceof ConstantPushInstruction) //gets value for SIPUSH, BIPUSH etc
+			{
+				ConstantPushInstruction constPush = (ConstantPushInstruction) instruction;
+				System.out.println("push= "+(constPush.getValue()));
+				temp1 = temp2;
+				temp2 = constPush.getValue();
+				System.out.println("temp1 = "+temp1+"temp2 = "+temp2);
+				if(handle.getPosition() != 0) {
+					try{
+						instList.delete(handle);
+					}catch(TargetLostException e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}else if(instruction instanceof StoreInstruction)
+			{
+				StoreInstruction a = (StoreInstruction) instruction;
+				System.out.println("storedINstruectino ------"+a.getIndex());
+				lvt.addVariable(a.getIndex(),temp2);
+				if(handle.getPosition() != 0) {
+					try{
+						instList.delete(handle);
+					}catch(TargetLostException e)
+					{
+						e.printStackTrace();
+					}
+				}
+				// try{
+				// 	instList.delete(handle);
+				// }catch(TargetLostException e)
+				// {
+				// 	e.printStackTrace();
+				// }
+			}
+				else if(instruction instanceof LoadInstruction) //need to load value here
+			{
+				LoadInstruction loadInst = (LoadInstruction) instruction;
+				System.out.println("load --------- "+loadInst.getIndex());
+				temp1 = temp2;
+				temp2 = lvt.getVariable(loadInst.getIndex());
+				System.out.println("temp1 = "+temp1+" "+temp2);
+				// try{
+				// 	instList.delete(handle);
+				// }catch(TargetLostException e)
+				// {
+				// 	e.printStackTrace();
+				// }
+				// if(handle.getPosition() != 0) {
+					try{
+						instList.delete(handle);
+					}catch(TargetLostException e)
+					{
+						e.printStackTrace();
+					}
+				// 	}
+				// }
+			}
+			else if((instruction instanceof IfInstruction)&&(temp1!=null)&&(temp2!=null)) {
+				System.out.println("if");
+				boolean answer = condition(handle, instruction, cpgen, instList, temp1, temp2, type);
+				System.out.println(answer);
+				if(handle.getPosition() != 0) {
+					try{
+						instList.delete(handle);
+					}catch(TargetLostException e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}
+			else if(instruction instanceof LCMP) {
+				System.out.println("LCMP");
+				type = 1;
+			}
+			else if((instruction instanceof DCMPG)||(instruction instanceof DCMPL)) {
+				type = 2;
+			}
+			else if((instruction instanceof FCMPG)||(instruction instanceof FCMPL))
+			{
+				type = 3;
+			}
 			// else if(instruction instanceof ConversionInstruction) {
 			// 	 System.out.println("convert");
 			// 	//  temp1 = temp2;
@@ -459,6 +618,15 @@ public class ConstantFolder
 				Number temp3 = temp2;
 				temp2 =	arithmeticMethod(handle, instruction, cpgen, instList, temp1, temp2); //handle IADD, DADD, ISUB etc
 				temp1 = temp3;
+				try
+				{
+					instList.delete(handle);
+				}catch(TargetLostException e)
+				{
+					e.printStackTrace();
+				}
+			}
+			else if(instruction instanceof ConversionInstruction) {
 				try
 				{
 					instList.delete(handle);
