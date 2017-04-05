@@ -1,7 +1,7 @@
 Testsuite: comp207p.target.ConstantVariableFoldingTest
-Tests run: 4, Failures: 0, Errors: 4, Skipped: 0, Time elapsed: 0.029 sec
+Tests run: 4, Failures: 0, Errors: 4, Skipped: 0, Time elapsed: 0.031 sec
 
-Testcase: testMethodThree took 0.002 sec
+Testcase: testMethodThree took 0.004 sec
 	Caused an ERROR
 Illegal type at constant pool entry 33 in class comp207p.target.ConstantVariableFolding
 Exception Details:
