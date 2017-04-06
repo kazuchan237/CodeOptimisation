@@ -270,7 +270,7 @@ public class ConstantFolder
 		return arithNumber;
 	}
 
-	private class LocalVariables
+	private static class LocalVariables
 	{
 		private HashMap<Integer, Number> lvt;
 		public LocalVariables()
@@ -288,7 +288,7 @@ public class ConstantFolder
 	}
 
 
-	private class ForLoops
+	private static class ForLoops
 	{
 		ArrayList<int[]> flps = new ArrayList<int[]>();
 		// private static ArrayList<Integer[]> flps = new ArrayList<Integer[]>();
@@ -525,7 +525,7 @@ public class ConstantFolder
 
 
 
-	private class DeleteTable {
+	private static class DeleteTable {
 		private ArrayList<ArrayList<Integer>> delete = new ArrayList<ArrayList<Integer>>();
 
 		public void add(int start, int end) {
