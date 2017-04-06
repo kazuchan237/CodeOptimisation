@@ -1,0 +1,95 @@
+Testsuite: comp207p.target.ConstantVariableFoldingTest
+Tests run: 4, Failures: 0, Errors: 4, Skipped: 0, Time elapsed: 0.023 sec
+
+Testcase: testMethodThree took 0.002 sec
+	Caused an ERROR
+Illegal type at constant pool entry 34 in class comp207p.target.ConstantVariableFolding
+Exception Details:
+  Location:
+    comp207p/target/ConstantVariableFolding.methodThree()Z @0: ldc
+  Reason:
+    Constant pool index 34 is invalid
+  Bytecode:
+    0x0000000: 1222 ac                                
+
+java.lang.VerifyError: Illegal type at constant pool entry 34 in class comp207p.target.ConstantVariableFolding
+Exception Details:
+  Location:
+    comp207p/target/ConstantVariableFolding.methodThree()Z @0: ldc
+  Reason:
+    Constant pool index 34 is invalid
+  Bytecode:
+    0x0000000: 1222 ac                                
+
+	at comp207p.target.ConstantVariableFoldingTest.<init>(Unknown Source)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:423)
+
+Testcase: testMethodFour took 0 sec
+	Caused an ERROR
+Illegal type at constant pool entry 34 in class comp207p.target.ConstantVariableFolding
+Exception Details:
+  Location:
+    comp207p/target/ConstantVariableFolding.methodThree()Z @0: ldc
+  Reason:
+    Constant pool index 34 is invalid
+  Bytecode:
+    0x0000000: 1222 ac                                
+
+java.lang.VerifyError: Illegal type at constant pool entry 34 in class comp207p.target.ConstantVariableFolding
+Exception Details:
+  Location:
+    comp207p/target/ConstantVariableFolding.methodThree()Z @0: ldc
+  Reason:
+    Constant pool index 34 is invalid
+  Bytecode:
+    0x0000000: 1222 ac                                
+
+	at comp207p.target.ConstantVariableFoldingTest.<init>(Unknown Source)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:423)
+
+Testcase: testMethodOne took 0 sec
+	Caused an ERROR
+Illegal type at constant pool entry 34 in class comp207p.target.ConstantVariableFolding
+Exception Details:
+  Location:
+    comp207p/target/ConstantVariableFolding.methodThree()Z @0: ldc
+  Reason:
+    Constant pool index 34 is invalid
+  Bytecode:
+    0x0000000: 1222 ac                                
+
+java.lang.VerifyError: Illegal type at constant pool entry 34 in class comp207p.target.ConstantVariableFolding
+Exception Details:
+  Location:
+    comp207p/target/ConstantVariableFolding.methodThree()Z @0: ldc
+  Reason:
+    Constant pool index 34 is invalid
+  Bytecode:
+    0x0000000: 1222 ac                                
+
+	at comp207p.target.ConstantVariableFoldingTest.<init>(Unknown Source)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:423)
+
+Testcase: testMethodTwo took 0 sec
+	Caused an ERROR
+Illegal type at constant pool entry 34 in class comp207p.target.ConstantVariableFolding
+Exception Details:
+  Location:
+    comp207p/target/ConstantVariableFolding.methodThree()Z @0: ldc
+  Reason:
+    Constant pool index 34 is invalid
+  Bytecode:
+    0x0000000: 1222 ac                                
+
+java.lang.VerifyError: Illegal type at constant pool entry 34 in class comp207p.target.ConstantVariableFolding
+Exception Details:
+  Location:
+    comp207p/target/ConstantVariableFolding.methodThree()Z @0: ldc
+  Reason:
+    Constant pool index 34 is invalid
+  Bytecode:
+    0x0000000: 1222 ac                                
+
+	at comp207p.target.ConstantVariableFoldingTest.<init>(Unknown Source)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:423)
+
