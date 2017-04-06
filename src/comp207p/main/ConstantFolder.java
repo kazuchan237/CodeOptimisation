@@ -270,7 +270,7 @@ public class ConstantFolder
 		return arithNumber;
 	}
 
-	private static class LocalVariables
+	private class LocalVariables
 	{
 		private HashMap<Integer, Number> lvt;
 		public LocalVariables()
@@ -288,7 +288,7 @@ public class ConstantFolder
 	}
 
 
-	private static class ForLoops
+	private class ForLoops
 	{
 		ArrayList<int[]> flps = new ArrayList<int[]>();
 		// private static ArrayList<Integer[]> flps = new ArrayList<Integer[]>();
@@ -525,7 +525,7 @@ public class ConstantFolder
 
 
 
-	private static class DeleteTable {
+	private class DeleteTable {
 		private ArrayList<ArrayList<Integer>> delete = new ArrayList<ArrayList<Integer>>();
 
 		public void add(int start, int end) {
@@ -783,7 +783,13 @@ public class ConstantFolder
 	    for (int y = end; y >= start; y--)
 	    {
 	  		InstructionHandle instruction = instList.getInstructionHandles()[y];
-				instList.delete(instruction);
+				try{
+					instList.delete(instruction);
+				}
+				catch(TargetLostException e)
+				{
+					e.printStackTrace();
+				}
 	    }
 	  }
 	}
@@ -812,6 +818,7 @@ public class ConstantFolder
 		LocalVariables lvt = new LocalVariables();
 		int type = 0;
 		DeleteTable deleteTable = secondMethod(cpgen, instList, forhash);
+		thirdMethod(instList, cpgen, deleteTable);
 
 		// InstructionHandle is a wrapper for actual Instructions
 		// for (InstructionHandle handle : instList.getInstructionHandles())

@@ -1,34 +1,5 @@
 Testsuite: comp207p.target.ConstantVariableFoldingTest
-<<<<<<< HEAD
 Tests run: 4, Failures: 0, Errors: 4, Skipped: 0, Time elapsed: 0.017 sec
-=======
-<<<<<<< HEAD
-Tests run: 4, Failures: 0, Errors: 4, Skipped: 0, Time elapsed: 0.082 sec
-
-Testcase: testMethodThree took 0.023 sec
-	Caused an ERROR
-Expecting a stackmap frame at branch target 16
-Exception Details:
-  Location:
-    comp207p/target/ConstantVariableFolding.methodThree()Z @9: if_icmple
-  Reason:
-    Expected stackmap frame at this location.
-  Bytecode:
-    0x0000000: 1130 393c 1204 3d1b 1ca4 0007 04a7 0004
-    0x0000010: 03ac                                   
-
-java.lang.VerifyError: Expecting a stackmap frame at branch target 16
-Exception Details:
-  Location:
-    comp207p/target/ConstantVariableFolding.methodThree()Z @9: if_icmple
-  Reason:
-    Expected stackmap frame at this location.
-  Bytecode:
-    0x0000000: 1130 393c 1204 3d1b 1ca4 0007 04a7 0004
-    0x0000010: 03ac                                   
-=======
-Tests run: 4, Failures: 0, Errors: 4, Skipped: 0, Time elapsed: 0.019 sec
->>>>>>> origin/Forward-Check
 
 Testcase: testMethodThree took 0.001 sec
 	Caused an ERROR
@@ -51,34 +22,12 @@ Exception Details:
   Bytecode:
     0x0000000: 1222 3c12 043d 1b1c a400 0704 a700 0403
     0x0000010: ac                                     
->>>>>>> e2edc0e40d34301279a5b4d03e2fb9db2a63ca89
 
 	at comp207p.target.ConstantVariableFoldingTest.<init>(Unknown Source)
 	at java.lang.reflect.Constructor.newInstance(Constructor.java:422)
 
 Testcase: testMethodFour took 0 sec
 	Caused an ERROR
-<<<<<<< HEAD
-Expecting a stackmap frame at branch target 16
-Exception Details:
-  Location:
-    comp207p/target/ConstantVariableFolding.methodThree()Z @9: if_icmple
-  Reason:
-    Expected stackmap frame at this location.
-  Bytecode:
-    0x0000000: 1130 393c 1204 3d1b 1ca4 0007 04a7 0004
-    0x0000010: 03ac                                   
-
-java.lang.VerifyError: Expecting a stackmap frame at branch target 16
-Exception Details:
-  Location:
-    comp207p/target/ConstantVariableFolding.methodThree()Z @9: if_icmple
-  Reason:
-    Expected stackmap frame at this location.
-  Bytecode:
-    0x0000000: 1130 393c 1204 3d1b 1ca4 0007 04a7 0004
-    0x0000010: 03ac                                   
-=======
 Illegal type at constant pool entry 34 in class comp207p.target.ConstantVariableFolding
 Exception Details:
   Location:
@@ -98,34 +47,12 @@ Exception Details:
   Bytecode:
     0x0000000: 1222 3c12 043d 1b1c a400 0704 a700 0403
     0x0000010: ac                                     
->>>>>>> e2edc0e40d34301279a5b4d03e2fb9db2a63ca89
 
 	at comp207p.target.ConstantVariableFoldingTest.<init>(Unknown Source)
 	at java.lang.reflect.Constructor.newInstance(Constructor.java:422)
 
 Testcase: testMethodOne took 0 sec
 	Caused an ERROR
-<<<<<<< HEAD
-Expecting a stackmap frame at branch target 16
-Exception Details:
-  Location:
-    comp207p/target/ConstantVariableFolding.methodThree()Z @9: if_icmple
-  Reason:
-    Expected stackmap frame at this location.
-  Bytecode:
-    0x0000000: 1130 393c 1204 3d1b 1ca4 0007 04a7 0004
-    0x0000010: 03ac                                   
-
-java.lang.VerifyError: Expecting a stackmap frame at branch target 16
-Exception Details:
-  Location:
-    comp207p/target/ConstantVariableFolding.methodThree()Z @9: if_icmple
-  Reason:
-    Expected stackmap frame at this location.
-  Bytecode:
-    0x0000000: 1130 393c 1204 3d1b 1ca4 0007 04a7 0004
-    0x0000010: 03ac                                   
-=======
 Illegal type at constant pool entry 34 in class comp207p.target.ConstantVariableFolding
 Exception Details:
   Location:
@@ -145,34 +72,12 @@ Exception Details:
   Bytecode:
     0x0000000: 1222 3c12 043d 1b1c a400 0704 a700 0403
     0x0000010: ac                                     
->>>>>>> e2edc0e40d34301279a5b4d03e2fb9db2a63ca89
 
 	at comp207p.target.ConstantVariableFoldingTest.<init>(Unknown Source)
 	at java.lang.reflect.Constructor.newInstance(Constructor.java:422)
 
 Testcase: testMethodTwo took 0 sec
 	Caused an ERROR
-<<<<<<< HEAD
-Expecting a stackmap frame at branch target 16
-Exception Details:
-  Location:
-    comp207p/target/ConstantVariableFolding.methodThree()Z @9: if_icmple
-  Reason:
-    Expected stackmap frame at this location.
-  Bytecode:
-    0x0000000: 1130 393c 1204 3d1b 1ca4 0007 04a7 0004
-    0x0000010: 03ac                                   
-
-java.lang.VerifyError: Expecting a stackmap frame at branch target 16
-Exception Details:
-  Location:
-    comp207p/target/ConstantVariableFolding.methodThree()Z @9: if_icmple
-  Reason:
-    Expected stackmap frame at this location.
-  Bytecode:
-    0x0000000: 1130 393c 1204 3d1b 1ca4 0007 04a7 0004
-    0x0000010: 03ac                                   
-=======
 Illegal type at constant pool entry 34 in class comp207p.target.ConstantVariableFolding
 Exception Details:
   Location:
@@ -192,7 +97,6 @@ Exception Details:
   Bytecode:
     0x0000000: 1222 3c12 043d 1b1c a400 0704 a700 0403
     0x0000010: ac                                     
->>>>>>> e2edc0e40d34301279a5b4d03e2fb9db2a63ca89
 
 	at comp207p.target.ConstantVariableFoldingTest.<init>(Unknown Source)
 	at java.lang.reflect.Constructor.newInstance(Constructor.java:422)
