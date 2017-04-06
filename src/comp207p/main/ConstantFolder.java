@@ -718,6 +718,7 @@ public class ConstantFolder
 		int startLoop = 0;
 		int endLoop = 0;
 		boolean beforeLoop = false;
+		boolean afterI = false;
 		// InstructionHandle is a wrapper for actual Instructions
 		for (InstructionHandle handle : instList.getInstructionHandles())
 		{
@@ -726,11 +727,15 @@ public class ConstantFolder
 			if(forhash.getList(counter)!=null)
 			{
 				if((forhash.getList(counter).get(0)==-1)||(forhash.getList(counter).size() == indexes.size()-1)) {
+					//End of loop
 					endLoop = counter;
 					beforeLoop = false;
+					replaceInstructionIndex = counter + 1;
+
 				}
 				else if(forhash.getList(counter).size() == indexes.size()+1)
 				{
+					//Start of loop
 					startLoop = counter;
 					endLoop = startLoop;
 					beforeLoop = true;
@@ -757,7 +762,7 @@ public class ConstantFolder
 				System.out.println("temp1="+temp1+" 2 = "+temp2);
 				System.out.println(handle);
 			}
-			else if((instruction instanceof INVOKEVIRTUAL)||(instruction instanceof GETSTATIC)||(instruction instanceof ReturnInstruction)) {
+			else if((instruction instanceof INVOKEVIRTUAL)||(instruction instanceof GETSTATIC)||(instruction instanceof ReturnInstruction)||(instruction instanceof IINC)) {
 				// if(handle.getNext() != null){
 					deleteTable.add(replaceInstructionIndex+1,counter - 1);
 					int size = deleteTable.getSize();
@@ -809,6 +814,7 @@ public class ConstantFolder
 				System.out.println("load --------- "+loadInst.getIndex());
 				if(indexes.contains(loadInst.getIndex())){
 					System.out.println("DONT TOUCH 2");
+					afterI = true;
 					// counter++;
 				}
 				else {
@@ -827,7 +833,11 @@ public class ConstantFolder
 				else {
 					boolean answer = condition(handle, instruction, cpgen, instList, temp1, temp2, type);
 					System.out.println(answer);
-					cpgen.addUtf8(String.valueOf(answer));
+					int a = 0;
+					if(answer == true) {
+						a = 1;
+					}
+					cpgen.addInteger(a);
 					System.out.println("INST: "+replaceInstructionIndex);
 					System.out.println(instList.getInstructionHandles()[replaceInstructionIndex]);
 					instList.getInstructionHandles()[replaceInstructionIndex].setInstruction(new LDC(cpgen.getSize() - 1));
@@ -846,7 +856,7 @@ public class ConstantFolder
 			{
 				type = 3;
 			}
-			else if(instruction instanceof ArithmeticInstruction)
+			else if((instruction instanceof ArithmeticInstruction)&&(!afterI))
 			{
 				System.out.println("arith");
 				Number temp3 = temp2;
