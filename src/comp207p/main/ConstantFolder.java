@@ -766,6 +766,22 @@ public class ConstantFolder
 		return deleteTable;
 	}
 
+	private void thirdMethod(InstructionList instList, ConstantPoolGen cpgen, DeleteTable deleteTable)
+	{
+		System.out.println("Third Method Running");
+	  //For each entry in the deleteTable starting at the end
+	  for (int x = deleteTable.getSize() - 1; x >= 0; x--)
+	  {
+	    int start = deleteTable.getStart(x);
+	    int end = deleteTable.getEnd(x);
+	    for (int y = end; y >= start; y--)
+	    {
+	  		InstructionHandle instruction = instList.getInstructionHandles()[y];
+				instList.delete(instruction);
+	    }
+	  }
+	}
+
 	// we rewrite integer constants with 5 :)
 	private void optimizeMethod(ClassGen cgen, ConstantPoolGen cpgen, Method method)
 	{
