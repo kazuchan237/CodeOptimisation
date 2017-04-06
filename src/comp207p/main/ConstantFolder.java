@@ -346,6 +346,19 @@ public class ConstantFolder
 			return -1;
 		}
 
+		private int getHandleIndex(InstructionList instList, int index)
+		{
+			InstructionHandle[] handles = instList.getInstructionHandles();
+			for(int i = 0; i<handles.length; i++)
+			{
+				if(handles[i].getPosition() == index)
+				{
+					return i;
+				}
+			}
+			return -1;
+		}
+
 		private int getForLoopStart(InstructionList instList, int start)
 		{
 			InstructionHandle[] handles = instList.getInstructionHandles();
@@ -453,7 +466,11 @@ public class ConstantFolder
 			{
 				return forloophash.get(key);
 			}
-
+			public void replaceHash(Integer oldKey, Integer newKey, ArrayList<Integer> list)
+			{
+				forloophash.remove(oldKey);
+				forloophash.put(newKey,list);
+			}
 		}
 
 		public ForLoopHash hashForLps(ForLoops flops)
@@ -486,6 +503,8 @@ public class ConstantFolder
 					}
 				}
 			}
+
+
 
 			forhash.printForlpHash();
 			return forhash;
