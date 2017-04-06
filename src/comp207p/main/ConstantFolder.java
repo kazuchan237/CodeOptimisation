@@ -731,6 +731,7 @@ public class ConstantFolder
 					endLoop = counter;
 					beforeLoop = false;
 					replaceInstructionIndex = counter + 1;
+					afterI = false;
 
 				}
 				else if(forhash.getList(counter).size() == indexes.size()+1)
@@ -745,6 +746,7 @@ public class ConstantFolder
 				System.out.println("StartLoopIndex: " + startLoop);
 				System.out.println("EndLoopIndex: " + endLoop);
 				System.out.println("Indexes: " + indexes);
+				System.out.println("INST: "+replaceInstructionIndex);
 
 			}
 			else if(instruction instanceof LDC)
@@ -762,7 +764,7 @@ public class ConstantFolder
 				System.out.println("temp1="+temp1+" 2 = "+temp2);
 				System.out.println(handle);
 			}
-			else if((instruction instanceof INVOKEVIRTUAL)||(instruction instanceof GETSTATIC)||(instruction instanceof ReturnInstruction)||(instruction instanceof IINC)) {
+			else if(((instruction instanceof INVOKEVIRTUAL)||(instruction instanceof GETSTATIC)||(instruction instanceof ReturnInstruction))&&(!afterI)) {
 				// if(handle.getNext() != null){
 					deleteTable.add(replaceInstructionIndex+1,counter - 1);
 					int size = deleteTable.getSize();
@@ -774,6 +776,16 @@ public class ConstantFolder
 					System.out.println("INST: "+replaceInstructionIndex);
 				// }
 				// replaceInstructionIndex++;
+			}
+			if(instruction instanceof IINC){
+				// deleteTable.add(replaceInstructionIndex+1,counter - 1);
+				// int size = deleteTable.getSize();
+				// System.out.println("SPECIAL");
+				// System.out.println(size);
+				// System.out.println(deleteTable.getStart(size-1));
+				// System.out.println(deleteTable.getEnd(size-1));
+				replaceInstructionIndex = counter + 1;
+				System.out.println("INST: "+replaceInstructionIndex);
 			}
 			// else if(instruction instanceof ) {
 			//
@@ -814,7 +826,15 @@ public class ConstantFolder
 				System.out.println("load --------- "+loadInst.getIndex());
 				if(indexes.contains(loadInst.getIndex())){
 					System.out.println("DONT TOUCH 2");
-					afterI = true;
+					if(!beforeLoop) {
+						afterI = true;
+						deleteTable.add(replaceInstructionIndex+1,counter - 1);
+						int size = deleteTable.getSize();
+						System.out.println("SPECIAL");
+						System.out.println(size);
+						System.out.println(deleteTable.getStart(size-1));
+						System.out.println(deleteTable.getEnd(size-1));
+				 	}
 					// counter++;
 				}
 				else {
