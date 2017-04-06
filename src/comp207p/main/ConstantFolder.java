@@ -670,7 +670,7 @@ public class ConstantFolder
 	// 	return deleteTable;
 	// }
 
-	private DeleteTable secondMethod( ConstantPoolGen cpgen, InstructionList instList,ForLoops forloops) {
+	private DeleteTable secondMethod( ConstantPoolGen cpgen, InstructionList instList,ForLoopHash forhash) {
 		System.out.println("second go");
 		// Code methodCode = method.getCode();
 		//
@@ -687,12 +687,35 @@ public class ConstantFolder
 		DeleteTable deleteTable = new DeleteTable();
 		int replaceInstructionIndex = 0;
 		int counter = 0;
+		ArrayList<Integer> indexes = new ArrayList<Integer>();
+		int startLoop = 0;
+		int endLoop = 0;
+		boolean beforeLoop = false;
 		// InstructionHandle is a wrapper for actual Instructions
 		for (InstructionHandle handle : instList.getInstructionHandles())
 		{
 			System.out.println(handle);
 			Instruction instruction = handle.getInstruction();
-			if(instruction instanceof LDC)
+			if(forhash.getList(counter)!=null)
+			{
+				if((forhash.getList(counter).get(0)==-1)||(forhash.getList(counter).size() == indexes.size()-1)) {
+					endLoop = counter;
+					beforeLoop = false;
+				}
+				else if(forhash.getList(counter).size() == indexes.size()+1)
+				{
+					startLoop = counter;
+					endLoop = startLoop;
+					beforeLoop = true;
+					replaceInstructionIndex = counter;
+				}
+				indexes = forhash.getList(counter);
+				System.out.println("StartLoopIndex: " + startLoop);
+				System.out.println("EndLoopIndex: " + endLoop);
+				System.out.println("Indexes: " + indexes);
+
+			}
+			else if(instruction instanceof LDC)
 			{
 				// deleteTable.add(2,3);
 				// System.out.println("WilliamLam");
@@ -736,26 +759,47 @@ public class ConstantFolder
 			}else if(instruction instanceof StoreInstruction)
 			{
 				StoreInstruction a = (StoreInstruction) instruction;
+
 				System.out.println("storedINstruectino ------"+a.getIndex());
-				lvt.addVariable(a.getIndex(),temp2);
+				if(indexes.contains(a.getIndex())){
+					System.out.println("DONT TOUCH");
+					// counter++;
+				}
+				else {
+					lvt.addVariable(a.getIndex(),temp2);
+				}
 			}
 				else if(instruction instanceof LoadInstruction) //need to load value here
 			{
 				LoadInstruction loadInst = (LoadInstruction) instruction;
+
 				System.out.println("load --------- "+loadInst.getIndex());
-				temp1 = temp2;
-				temp2 = lvt.getVariable(loadInst.getIndex());
-				System.out.println("temp1 = "+temp1+" "+temp2);
+				if(indexes.contains(loadInst.getIndex())){
+					System.out.println("DONT TOUCH 2");
+					// counter++;
+				}
+				else {
+					temp1 = temp2;
+					temp2 = lvt.getVariable(loadInst.getIndex());
+					System.out.println("temp1 = "+temp1+" "+temp2);
+				}
 			}
 			else if((instruction instanceof IfInstruction)&&(temp1!=null)&&(temp2!=null)) {
 				System.out.println("if");
-				boolean answer = condition(handle, instruction, cpgen, instList, temp1, temp2, type);
-				System.out.println(answer);
-				cpgen.addUtf8(String.valueOf(answer));
-				System.out.println("INST: "+replaceInstructionIndex);
-				System.out.println(instList.getInstructionHandles()[replaceInstructionIndex]);
-				instList.getInstructionHandles()[replaceInstructionIndex].setInstruction(new LDC(cpgen.getSize() - 1));
-				System.out.println(instList.getInstructionHandles()[replaceInstructionIndex]);
+				if(beforeLoop) {
+					beforeLoop = false;
+					replaceInstructionIndex = counter + 1;
+					System.out.println("If in loop condition: " + replaceInstructionIndex);
+				}
+				else {
+					boolean answer = condition(handle, instruction, cpgen, instList, temp1, temp2, type);
+					System.out.println(answer);
+					cpgen.addUtf8(String.valueOf(answer));
+					System.out.println("INST: "+replaceInstructionIndex);
+					System.out.println(instList.getInstructionHandles()[replaceInstructionIndex]);
+					instList.getInstructionHandles()[replaceInstructionIndex].setInstruction(new LDC(cpgen.getSize() - 1));
+					System.out.println(instList.getInstructionHandles()[replaceInstructionIndex]);
+				}
 
 			}
 			else if(instruction instanceof LCMP) {
@@ -820,7 +864,7 @@ public class ConstantFolder
 		Number temp2 = 0;
 		LocalVariables lvt = new LocalVariables();
 		int type = 0;
-		DeleteTable deleteTable = secondMethod(cpgen, instList, forloops);
+		DeleteTable deleteTable = secondMethod(cpgen, instList, forhash);
 
 		// InstructionHandle is a wrapper for actual Instructions
 		// for (InstructionHandle handle : instList.getInstructionHandles())
