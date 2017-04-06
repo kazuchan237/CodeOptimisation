@@ -818,7 +818,8 @@ public class ConstantFolder
 		LocalVariables lvt = new LocalVariables();
 		int type = 0;
 		DeleteTable deleteTable = secondMethod(cpgen, instList, forhash);
-		thirdMethod(instList, cpgen, deleteTable);
+
+		//thirdMethod(instList, cpgen, deleteTable);
 
 		// InstructionHandle is a wrapper for actual Instructions
 		// for (InstructionHandle handle : instList.getInstructionHandles())
