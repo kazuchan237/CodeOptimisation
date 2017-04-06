@@ -563,6 +563,33 @@ public class ConstantFolder
 		public int getEnd(int index) {
 			return delete.get(index).get(1);
 		}
+
+		public void setStart(int index, int value)
+		{
+			ArrayList<Integer> temp = new ArrayList<Integer>();
+			temp.add(value);
+			temp.add(getEnd(index));
+			delete.set(index, temp);
+		}
+
+		public void setEnd(int index, int value)
+		{
+			ArrayList<Integer> temp = new ArrayList<Integer>();
+			temp.add(getStart(index));
+			temp.add(value);
+			delete.set(index, temp);
+		}
+
+		public void deleteShift(int deleteIndex)
+		{
+			for (int x = 0; x < getSize(); x++)
+			{
+				if (getStart(x) > deleteIndex)
+					setStart(x, getStart(x) - 1);
+				if (getEnd(x) > deleteIndex)
+					setEnd(x, getEnd(x) - 1);
+			}
+		}
 	}
 
 	// private DeleteTable secondMethod(ClassGen cgen, ConstantPoolGen cpgen, Method method, ForLoops forloops) {
@@ -792,6 +819,42 @@ public class ConstantFolder
 	private void thirdMethod(InstructionList instList, ConstantPoolGen cpgen, DeleteTable deleteTable)
 	{
 		System.out.println("Third Method Running");
+
+		//First pass-through replacing gotos and ifs
+		// for (int x = 0; x < deleteTable.getSize(); x++)
+		// {
+		// 	int start = deleteTable.getStart(x);
+		// 	int end = deleteTable.getEnd(x);
+		// 	for (int y = start; y <= end; y++)
+		// 	{
+		// 		Instruction instruction = instList.getInstructionHandles()[y].getInstruction();
+		// 		if (instruction instanceof BranchInstruction)
+		// 		{
+		// 			instList.getInstructionHandles()[y].setInstruction(new ICONST(1));
+		// 		}
+		// 	}
+		// }
+		for (int x = deleteTable.getSize() - 1; x >= 0; x--)
+	  {
+	    int start = deleteTable.getStart(x);
+	    int end = deleteTable.getEnd(x);
+	    for (int y = end; y >= start; y--)
+	    {
+	  		InstructionHandle instructionHandle = instList.getInstructionHandles()[y];
+				if (instructionHandle.getInstruction() instanceof IfInstruction || instructionHandle.getInstruction() instanceof GotoInstruction)
+				try{
+					System.out.println("REMOVED: " + instructionHandle);
+					instList.delete(instructionHandle);
+					deleteTable.deleteShift(y);
+				}
+				catch(TargetLostException e)
+				{
+					e.printStackTrace();
+				}
+	    }
+	  }
+
+		//Second pass-through delete
 	  //For each entry in the deleteTable starting at the end
 	  for (int x = deleteTable.getSize() - 1; x >= 0; x--)
 	  {
@@ -801,6 +864,7 @@ public class ConstantFolder
 	    {
 	  		InstructionHandle instruction = instList.getInstructionHandles()[y];
 				try{
+					System.out.println("REMOVED: " + instruction);
 					instList.delete(instruction);
 				}
 				catch(TargetLostException e)
@@ -839,7 +903,7 @@ public class ConstantFolder
 		int type = 0;
 		DeleteTable deleteTable = secondMethod(cpgen, instList, forhash);
 
-		//thirdMethod(instList, cpgen, deleteTable);
+		thirdMethod(instList, cpgen, deleteTable);
 
 		// InstructionHandle is a wrapper for actual Instructions
 		// for (InstructionHandle handle : instList.getInstructionHandles())
@@ -1007,7 +1071,13 @@ public class ConstantFolder
 		Method[] methods = cgen.getMethods();
 		for (Method m : methods)
 		{
+			if (!m.toString().contains("method"))
+			{
+				continue;
+			}
 			optimizeMethod(cgen,cpgen,m);
+
+			System.out.println("SAMSAMSAMSAMSAMSAMSAMSAM" + m.toString());
 			System.out.println("");
 
 		}
