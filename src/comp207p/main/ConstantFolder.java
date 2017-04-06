@@ -821,7 +821,6 @@ public class ConstantFolder
 		return deleteTable;
 	}
 
-<<<<<<< HEAD
 	private void thirdMethod(InstructionList instList, ConstantPoolGen cpgen, DeleteTable deleteTable)
 	{
 		System.out.println("Third Method Running");
@@ -880,9 +879,6 @@ public class ConstantFolder
 	    }
 	  }
 	}
-
-=======
->>>>>>> 91e65a280c3314ed6d2b59778252f4efe60d5997
 	// we rewrite integer constants with 5 :)
 	private void optimizeMethod(ClassGen cgen, ConstantPoolGen cpgen, Method method)
 	{
@@ -909,13 +905,9 @@ public class ConstantFolder
 		Number temp2 = 0;
 		LocalVariables lvt = new LocalVariables();
 		int type = 0;
-<<<<<<< HEAD
 		DeleteTable deleteTable = secondMethod(cpgen, instList, forhash);
 
 		thirdMethod(instList, cpgen, deleteTable);
-=======
-		DeleteTable deleteTable = secondMethod(cpgen, instList, forloops);
->>>>>>> 91e65a280c3314ed6d2b59778252f4efe60d5997
 
 		// InstructionHandle is a wrapper for actual Instructions
 		// for (InstructionHandle handle : instList.getInstructionHandles())
