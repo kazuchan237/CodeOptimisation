@@ -1,5 +1,9 @@
 Testsuite: comp207p.target.ConstantVariableFoldingTest
+<<<<<<< HEAD
 Tests run: 4, Failures: 0, Errors: 4, Skipped: 0, Time elapsed: 0.025 sec
+=======
+Tests run: 4, Failures: 0, Errors: 4, Skipped: 0, Time elapsed: 0.027 sec
+>>>>>>> 175c0b01df10b895b2fc6ce939e855ffd574a88b
 
 Testcase: testMethodThree took 0.002 sec
 	Caused an ERROR
@@ -24,7 +28,7 @@ Exception Details:
     0x0000010: ac                                     
 
 	at comp207p.target.ConstantVariableFoldingTest.<init>(Unknown Source)
-	at java.lang.reflect.Constructor.newInstance(Constructor.java:422)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:423)
 
 Testcase: testMethodFour took 0 sec
 	Caused an ERROR
@@ -49,7 +53,7 @@ Exception Details:
     0x0000010: ac                                     
 
 	at comp207p.target.ConstantVariableFoldingTest.<init>(Unknown Source)
-	at java.lang.reflect.Constructor.newInstance(Constructor.java:422)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:423)
 
 Testcase: testMethodOne took 0 sec
 	Caused an ERROR
@@ -74,7 +78,7 @@ Exception Details:
     0x0000010: ac                                     
 
 	at comp207p.target.ConstantVariableFoldingTest.<init>(Unknown Source)
-	at java.lang.reflect.Constructor.newInstance(Constructor.java:422)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:423)
 
 Testcase: testMethodTwo took 0.001 sec
 	Caused an ERROR
@@ -99,5 +103,5 @@ Exception Details:
     0x0000010: ac                                     
 
 	at comp207p.target.ConstantVariableFoldingTest.<init>(Unknown Source)
-	at java.lang.reflect.Constructor.newInstance(Constructor.java:422)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:423)
 
