@@ -454,6 +454,10 @@ public class ConstantFolder
 					forloophash.put(a[1],temp2);
 				}
 			}
+			public ForLoopHash(HashMap<Integer, ArrayList<Integer>> ab)
+			{
+				this.forloophash = ab;
+			}
 			public void printForlpHash()
 			{
 				// System.out.println("****************key = ");
@@ -478,14 +482,26 @@ public class ConstantFolder
 			{
 				return forloophash.get(key);
 			}
-			public void replaceHash(Integer oldKey, Integer newKey, ArrayList<Integer> list)
+
+			public HashMap<Integer, ArrayList<Integer>> replaceHash(InstructionList instList)
 			{
-				forloophash.remove(oldKey);
-				forloophash.put(newKey,list);
+				HashMap<Integer, ArrayList<Integer>> newHash = new HashMap<Integer, ArrayList<Integer>>();
+				for(Integer key: forloophash.keySet())
+				{
+					ArrayList<Integer> loadIndex = forloophash.get(key);
+					Integer newKey = getHandleIndex(instList,key);
+					newHash.put(newKey,loadIndex);
+					// System.out.println("oldkey");
+					System.out.println(key);
+					// System.out.println("new key");
+					System.out.println(newKey);
+
+				}
+				return newHash;
 			}
 		}
 
-		public ForLoopHash hashForLps(ForLoops flops)
+		public ForLoopHash hashForLps(ForLoops flops, InstructionList instList)
 		{
 			ForLoops forloops = flops;
 			ForLoopHash forhash = new ForLoopHash(flops);
@@ -516,10 +532,11 @@ public class ConstantFolder
 				}
 			}
 
-
+			System.out.println("yohoh");
 
 			forhash.printForlpHash();
-			return forhash;
+			ForLoopHash newHash = new ForLoopHash(forhash.replaceHash(instList));
+			return newHash;
 		}
 
 
@@ -772,16 +789,19 @@ public class ConstantFolder
 		ForLoops forloops = firstMethod(cgen,cpgen,method);
 		forloops.printFor();
 		System.out.println("hello11111111");
-		ForLoopHash forhash = hashForLps(forloops);
-		forhash.printForlpHash();
-		// DeleteTable deleteTable = secondMethod(cgen, cpgen, method, forloops);
-		// Get the Code of the method, which is a collection of bytecode instructions
-		System.out.println(method.toString());
 		Code methodCode = method.getCode();
 
 		// Now get the actualy bytecode data in byte array,
 		// and use it to initialise an InstructionList
 		InstructionList instList = new InstructionList(methodCode.getCode());
+
+
+		ForLoopHash forhash = hashForLps(forloops,instList);
+		System.out.println("new has ===");
+		forhash.printForlpHash();
+		// DeleteTable deleteTable = secondMethod(cgen, cpgen, method, forloops);
+		// Get the Code of the method, which is a collection of bytecode instructions
+		System.out.println(method.toString());
 
 		// Initialise a method generator with the original method as the baseline
 		MethodGen methodGen = new MethodGen(method.getAccessFlags(), method.getReturnType(), method.getArgumentTypes(), null, method.getName(), cgen.getClassName(), instList, cpgen);
