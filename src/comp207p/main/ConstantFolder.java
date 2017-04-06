@@ -329,10 +329,10 @@ public class ConstantFolder
 				Instruction instruction = handle.getInstruction();
 				if(handle.getPosition() == start)
 				{
-					System.out.println("load ----- ********");
+					System.out.println("load ---- ********");
 					LoadInstruction loadInst = (LoadInstruction) instruction;
 					int loadIndex = loadInst.getIndex();
-					System.out.println("load --------- "+loadIndex);
+					System.out.println("load ------ "+loadIndex);
 					return loadIndex;
 				}
 			}
@@ -396,7 +396,7 @@ public class ConstantFolder
 
 		private ForLoops firstMethod(ClassGen cgen, ConstantPoolGen cpgen, Method method)
 		{
-			System.out.println("----- First Phase -----");
+			System.out.println("-------------------- First Phase --------------------");
 			Code methodCode = method.getCode();
 			InstructionList instList = new InstructionList(methodCode.getCode());
 			MethodGen methodGen = new MethodGen(method.getAccessFlags(), method.getReturnType(), method.getArgumentTypes(), null, method.getName(), cgen.getClassName(), instList, cpgen);
@@ -416,7 +416,7 @@ public class ConstantFolder
 						int start = getForLoopStart(instList,target);
 						int loadIndex = getLocalVariableIndex(instList,target);
  						System.out.println("what is localindesx"+loadIndex);
-						System.out.println("FirstCheck------------------FOR LOOOOOOOOOOOOOOOP___________-------*******************");
+						System.out.println("FirstCheck---------FOR LOOOOOOOOOOOOOOOP___________--------*******************");
 						System.out.println("start = "+start);
 						System.out.println("end = "+end);
 						forloops.addForLoop(start,end,loadIndex);
@@ -530,9 +530,6 @@ public class ConstantFolder
 			return newHash;
 		}
 
-
-
-
 	private static class DeleteTable {
 		private ArrayList<ArrayList<Integer>> delete = new ArrayList<ArrayList<Integer>>();
 
@@ -584,7 +581,7 @@ public class ConstantFolder
 	}
 
 	private DeleteTable secondMethod( ConstantPoolGen cpgen, InstructionList instList,ForLoopHash forhash) {
-		System.out.println("\n----- Second Phase -----");
+		System.out.println("\n-------------------- Second Phase --------------------");
 		//
 		// // Now get the actualy bytecode data in byte array,
 		// // and use it to initialise an InstructionList
@@ -759,7 +756,7 @@ public class ConstantFolder
 
 	private void thirdMethod(InstructionList instList, ConstantPoolGen cpgen, DeleteTable deleteTable)
 	{
-		System.out.println("\n----- Third Phase -----");
+		System.out.println("\n-------------------- Third Phase --------------------");
 
 		//First pass-through replacing gotos and ifs
 		for (int x = deleteTable.getSize() - 1; x >= 0; x--)
