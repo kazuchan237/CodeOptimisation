@@ -642,7 +642,7 @@ public class ConstantFolder
 	// 	return deleteTable;
 	// }
 
-	private DeleteTable secondMethod( ConstantPoolGen cpgen, InstructionList instList,ForLoops forloops) {
+	private DeleteTable secondMethod( ConstantPoolGen cpgen, InstructionList instList,ForLoopHash forhash) {
 		System.out.println("second go");
 		// Code methodCode = method.getCode();
 		//
@@ -681,6 +681,12 @@ public class ConstantFolder
 			}
 			else if((instruction instanceof INVOKEVIRTUAL)||(instruction instanceof GETSTATIC)||(instruction instanceof ReturnInstruction)) {
 				// if(handle.getNext() != null){
+				  deleteTable.add(replaceInstructionIndex+1,counter - 1);
+					int size = deleteTable.getSize();
+					System.out.println("SPECIAL");
+					System.out.println(size);
+					System.out.println(deleteTable.getStart(size-1));
+					System.out.println(deleteTable.getEnd(size-1));
 					replaceInstructionIndex = counter + 1;
 					System.out.println("INST: "+replaceInstructionIndex);
 				// }
@@ -805,7 +811,7 @@ public class ConstantFolder
 		Number temp2 = 0;
 		LocalVariables lvt = new LocalVariables();
 		int type = 0;
-		DeleteTable deleteTable = secondMethod(cpgen, instList, forloops);
+		DeleteTable deleteTable = secondMethod(cpgen, instList, forhash);
 
 		// InstructionHandle is a wrapper for actual Instructions
 		// for (InstructionHandle handle : instList.getInstructionHandles())
