@@ -1,5 +1,9 @@
 Testsuite: comp207p.target.ConstantVariableFoldingTest
+<<<<<<< Updated upstream
 Tests run: 4, Failures: 0, Errors: 4, Skipped: 0, Time elapsed: 0.027 sec
+=======
+Tests run: 4, Failures: 0, Errors: 4, Skipped: 0, Time elapsed: 0.017 sec
+>>>>>>> Stashed changes
 
 Testcase: testMethodThree took 0.002 sec
 	Caused an ERROR
