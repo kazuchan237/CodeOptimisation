@@ -1148,7 +1148,8 @@ public class ConstantFolder
 
 		// we generate a new class with modifications
 		// and store it in a member variable
-
+		cgen.setConstantPool(cpgen);
+		cgen.setMajor(50); 
 		this.optimized = cgen.getJavaClass();
 
 		// Method[] ms = cgen.getMethods();
