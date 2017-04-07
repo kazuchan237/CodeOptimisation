@@ -517,7 +517,7 @@ public class ConstantFolder
 						}else
 						{
 							loadIndexes.add(a[2]);
-							System.out.println("\tAdded Reference: " + loadIndexes.get(0));
+							System.out.println("\n\tAdded Reference: " + a[2]);
 						}
 						forhash.addHash(i,loadIndexes);
 					}
@@ -832,7 +832,7 @@ public class ConstantFolder
 
 		//Second pass-through delete
 	  //For each entry in the deleteTable starting at the end
-		System.out.println("Removing Other Instructions");
+		System.out.println("\nRemoving Other Instructions");
 	  for (int x = deleteTable.getSize() - 1; x >= 0; x--)
 	  {
 	    int start = deleteTable.getStart(x);
