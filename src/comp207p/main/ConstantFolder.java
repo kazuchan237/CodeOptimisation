@@ -298,9 +298,9 @@ public class ConstantFolder
 			for(int j = 0; j<getSize(); j++)
 			{
 					a = flps.get(0);
-					System.out.println(a[0]);
-					System.out.println(a[1]);
-					System.out.println(a[2]);
+					// System.out.println(a[0]);
+					// System.out.println(a[1]);
+					// System.out.println(a[2]);
 			}
 		}
 		public boolean checkinForloop(int value) // checks if instruction index is inside the for loop
@@ -329,10 +329,8 @@ public class ConstantFolder
 				Instruction instruction = handle.getInstruction();
 				if(handle.getPosition() == start)
 				{
-					System.out.println("load ---- ********");
 					LoadInstruction loadInst = (LoadInstruction) instruction;
 					int loadIndex = loadInst.getIndex();
-					System.out.println("load ------ "+loadIndex);
 					return loadIndex;
 				}
 			}
@@ -407,7 +405,7 @@ public class ConstantFolder
 				Instruction instruction = handle.getInstruction();
 				if(instruction instanceof GotoInstruction)
 				{
-					System.out.println("GOTO_)_____");
+					System.out.println("GoTo Found");
 					GotoInstruction goTo = (GotoInstruction) instruction;
 					Integer target = goTo.getTarget().getPosition();
 					Integer end = handle.getPosition();
@@ -415,12 +413,12 @@ public class ConstantFolder
 					{
 						int start = goTo.getTarget().getPrev().getPosition();
 						int loadIndex = getLocalVariableIndex(instList, target);
- 						System.out.println("what is localindesx"+loadIndex);
-						System.out.println("FirstCheck---------FOR LOOOOOOOOOOOOOOOP___________--------*******************");
-						System.out.println("Start = " + start);
-						System.out.println("End = " + end);
-						forloops.addForLoop(start,end,loadIndex);
- 						forloops.printFor();
+						System.out.println("For Loop Found");
+ 						System.out.println("\tLocal Variabl Index: " + loadIndex);
+						System.out.println("\tStart = " + start);
+						System.out.println("\tEnd = " + end);
+						forloops.addForLoop(start, end, loadIndex);
+ 						//forloops.printFor();
 					}
 				}
 			}
@@ -451,14 +449,20 @@ public class ConstantFolder
 			}
 			public void printForlpHash()
 			{
-				// System.out.println("****************key = ");
+				System.out.println("HashMap");
 				for(Integer key: forloophash.keySet())
 				{
-					System.out.println(key);
+					System.out.print("\tKey -> " + key + " | Value -> ");
 					for(Integer temp : forloophash.get(key))
 					{
-						System.out.println(temp);
+						if (temp == -1)
+						{
+							System.out.print("Empty");
+							break;
+						}
+						System.out.print(temp + " ");
 					}
+					System.out.println();
 				}
 			}
 			public boolean keyExists(Integer key)
@@ -482,11 +486,8 @@ public class ConstantFolder
 					ArrayList<Integer> loadIndex = forloophash.get(key);
 					Integer newKey = getHandleIndex(instList,key);
 					newHash.put(newKey,loadIndex);
-					// System.out.println("oldkey");
-					System.out.println(key);
-					// System.out.println("new key");
-					System.out.println(newKey);
-
+					//System.out.println(key);
+					//System.out.println(newKey);
 				}
 				return newHash;
 			}
@@ -494,6 +495,7 @@ public class ConstantFolder
 
 		public ForLoopHash hashForLps(ForLoops flops, InstructionList instList)
 		{
+			System.out.println("HashTable -> HashMap");
 			ForLoops forloops = flops;
 			ForLoopHash forhash = new ForLoopHash(flops);
 			for(int[] a : forloops.flps)
@@ -502,18 +504,16 @@ public class ConstantFolder
 				Integer temp2 = a[1];
 				for(int i = temp1; i< temp2; i++)
 				{
-					// System.out.println(i);
 					if(forhash.keyExists(i))
 					{
-						System.out.println("keyexists");
-						System.out.println(i);
+						System.out.println("Key Exists - " + i);
 						ArrayList<Integer> loadIndexes = forhash.getList(i);
 						if(loadIndexes.get(0) == -1)
 						{
-							System.out.println("minus");
+							//System.out.println("Empty (-1)");
 							loadIndexes.add(a[2]);
 							loadIndexes.remove(0);
-							System.out.println(loadIndexes.get(0));
+							//System.out.println(loadIndexes.get(0));
 						}else
 						{
 							loadIndexes.add(a[2]);
@@ -522,8 +522,6 @@ public class ConstantFolder
 					}
 				}
 			}
-
-			System.out.println("yohoh");
 
 			forhash.printForlpHash();
 			ForLoopHash newHash = new ForLoopHash(forhash.replaceHash(instList));
@@ -813,9 +811,7 @@ public class ConstantFolder
 
 
 		ForLoopHash forhash = hashForLps(forloops,instList);
-		System.out.println("new has ===");
-		forhash.printForlpHash();
-		// DeleteTable deleteTable = secondMethod(cgen, cpgen, method, forloops);
+
 		// Get the Code of the method, which is a collection of bytecode instructions
 
 		// Initialise a method generator with the original method as the baseline
@@ -841,6 +837,24 @@ public class ConstantFolder
 
 	}
 
+	private boolean filterMethods(String methodName)
+	{
+		String[] filter = {"deleteShift", "<init>", "printForlpHash", "replaceHash",
+			"printFor", "checkinForloop", "checkEmpty", "addForLoop", "getList",
+			"toString", "contains", "setTo", "setFrom", "getTo", "getFrom", "getSize",
+			"addHash", "keyExists", "setEnd", "setStart", "getEnd", "getStart",
+			"recomputeSets", "removeJump", "addJump", "getJumps", "add", "checkCode",
+			"jumpsContaining", "destinationsContain", "getValueAtPosition",
+			"getVariable", "setValueAtPosition"
+		};
+		for (int x = 0; x < filter.length; x++)
+		{
+			if (methodName.contains(filter[x]))
+				return false;
+		}
+		return true;
+	}
+
 	public void optimize()
 	{
 		ClassGen cgen = new ClassGen(original);
@@ -850,10 +864,8 @@ public class ConstantFolder
 		Method[] methods = cgen.getMethods();
 		for (Method m : methods)
 		{
-			if (!m.toString().contains("method"))
-			{
+			if (!filterMethods(m.toString()))
 				continue;
-			}
 			System.out.println("\n" + m.toString());
 			optimizeMethod(cgen,cpgen,m);
 		}
