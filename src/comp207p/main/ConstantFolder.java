@@ -352,47 +352,47 @@ public class ConstantFolder
 			return -1;
 		}
 
-		private int getForLoopStart(InstructionList instList, int start)
-		{
-			InstructionHandle[] handles = instList.getInstructionHandles();
-			System.out.println("startindex for getForLoopStart"+start);
-			int temp= 0;
-			for(int i = 0; i<handles.length; i++)
-			{
-				if(handles[i].getPosition() == start)
-				{
-					temp = i;
-					System.out.println("found ");
-					System.out.println(i);
-					break;
-				}
-			}
-			int count = 1;
-			for(int j = temp - 1 ; j >= 0; j--)
-			{
-				InstructionHandle handle = handles[j];
-				System.out.println(handle);
-				Instruction a = handle.getInstruction();
-				if(a instanceof ConstantPushInstruction || a instanceof LDC || a instanceof LDC2_W || a instanceof LoadInstruction)
-				{
-					count = count -1;
-					if(count == 0)
-					{
-						System.out.println("hello");
-						System.out.println(handle.getPosition());
-						return handle.getPosition();
-					}
-				}
-
-				if(a instanceof ArithmeticInstruction)
-				{
-					count = 2;
-				}
-
-			}
-
-			return 0;
-		}
+		// private int getForLoopStart(InstructionList instList, int start)
+		// {
+		// 	InstructionHandle[] handles = instList.getInstructionHandles();
+		// 	System.out.println("startindex for getForLoopStart"+start);
+		// 	int temp= 0;
+		// 	for(int i = 0; i<handles.length; i++)
+		// 	{
+		// 		if(handles[i].getPosition() == start)
+		// 		{
+		// 			temp = i;
+		// 			System.out.println("found ");
+		// 			System.out.println(i);
+		// 			break;
+		// 		}
+		// 	}
+		// 	int count = 1;
+		// 	for(int j = temp - 1 ; j >= 0; j--)
+		// 	{
+		// 		InstructionHandle handle = handles[j];
+		// 		System.out.println(handle);
+		// 		Instruction a = handle.getInstruction();
+		// 		if(a instanceof ConstantPushInstruction || a instanceof LDC || a instanceof LDC2_W || a instanceof LoadInstruction)
+		// 		{
+		// 			count = count -1;
+		// 			if(count == 0)
+		// 			{
+		// 				System.out.println("hello");
+		// 				System.out.println(handle.getPosition());
+		// 				return handle.getPosition();
+		// 			}
+		// 		}
+		//
+		// 		if(a instanceof ArithmeticInstruction)
+		// 		{
+		// 			count = 2;
+		// 		}
+		//
+		// 	}
+		//
+		// 	return 0;
+		// }
 
 		private ForLoops firstMethod(ClassGen cgen, ConstantPoolGen cpgen, Method method)
 		{
@@ -413,12 +413,12 @@ public class ConstantFolder
 					Integer end = handle.getPosition();
 					if(target < end)
 					{
-						int start = getForLoopStart(instList, target);
+						int start = goTo.getTarget().getPrev().getPosition();
 						int loadIndex = getLocalVariableIndex(instList, target);
  						System.out.println("what is localindesx"+loadIndex);
 						System.out.println("FirstCheck---------FOR LOOOOOOOOOOOOOOOP___________--------*******************");
-						System.out.println("start = "+start);
-						System.out.println("end = "+end);
+						System.out.println("Start = " + start);
+						System.out.println("End = " + end);
 						forloops.addForLoop(start,end,loadIndex);
  						forloops.printFor();
 					}
