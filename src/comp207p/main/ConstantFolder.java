@@ -239,13 +239,30 @@ public class ConstantFolder
 		if((type == 0) || (type == 2)) {
 			System.out.println("\tType LDC: "+index);
 			System.out.println(instList.getInstructionHandles()[index]);
-			instList.getInstructionHandles()[index].setInstruction(new LDC(cpgen.getSize() - 1));
+			if(cpgen.lookupFloat(arithNumber.floatValue())!=-1) {
+				instList.getInstructionHandles()[index].setInstruction(new LDC(cpgen.lookupFloat(arithNumber.floatValue())));
+			}
+			else if(cpgen.lookupInteger(arithNumber.intValue())!=-1){
+				instList.getInstructionHandles()[index].setInstruction(new LDC(cpgen.lookupInteger(arithNumber.intValue())));
+			}
+			else {
+				instList.getInstructionHandles()[index].setInstruction(new LDC(cpgen.getSize() - 1));
+		  }
 			System.out.println(instList.getInstructionHandles()[index]);
 		}
 		else {
 			System.out.println("\tType LDC2_W: "+index);
 			System.out.println(instList.getInstructionHandles()[index]);
-			instList.getInstructionHandles()[index].setInstruction(new LDC2_W(cpgen.getSize() - 2));
+			if(cpgen.lookupDouble(arithNumber.doubleValue())!=-1) {
+				instList.getInstructionHandles()[index].setInstruction(new LDC2_W(cpgen.lookupDouble(arithNumber.doubleValue())));
+			}
+			else if(cpgen.lookupLong(arithNumber.longValue())!=-1){
+				instList.getInstructionHandles()[index].setInstruction(new LDC2_W(cpgen.lookupLong(arithNumber.longValue())));
+			}
+			else {
+				instList.getInstructionHandles()[index].setInstruction(new LDC2_W(cpgen.getSize() - 1));
+		  }
+			// instList.getInstructionHandles()[index].setInstruction(new LDC2_W(cpgen.getSize() - 2));
 			System.out.println(instList.getInstructionHandles()[index]);
 		}
 		return arithNumber;
@@ -757,7 +774,19 @@ public class ConstantFolder
 					cpgen.addInteger(a);
 					System.out.println("INST: "+replaceInstructionIndex);
 					System.out.println(instList.getInstructionHandles()[replaceInstructionIndex]);
-					instList.getInstructionHandles()[replaceInstructionIndex].setInstruction(new LDC(cpgen.getSize() - 1));
+					// else if(cgen.lookupInteger(a)!=-1){
+					// 	instList.getInstructionHandles()[index].setInstruction(new LDC(cpgen.lookupInteger(a)));
+					// }
+					// else {
+					// 	instList.getInstructionHandles()[index].setInstruction(new LDC(cpgen.getSize() - 1));
+				  // }
+					if(cpgen.lookupInteger(a)!=-1){
+						instList.getInstructionHandles()[replaceInstructionIndex].setInstruction(new LDC(cpgen.lookupInteger(a)));
+					}
+					else {
+						instList.getInstructionHandles()[replaceInstructionIndex].setInstruction(new LDC(cpgen.getSize() - 1));
+				  }
+					// instList.getInstructionHandles()[replaceInstructionIndex].setInstruction(new LDC(cpgen.getSize() - 1));
 					System.out.println(instList.getInstructionHandles()[replaceInstructionIndex]);
 				}
 
