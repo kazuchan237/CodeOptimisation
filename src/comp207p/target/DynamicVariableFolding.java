@@ -77,4 +77,19 @@ public class DynamicVariableFolding {
     //     b = a + 2;
     //     return a * b;
     // }
+
+    // public int methodFour(){
+    //     int a = 534245;
+    //     int b = a - 1234;
+    //     System.out.println((120298345 - a) * 38.435792873);
+    //     for (int j = 1 + 2; j < 11; j++)
+    //     {
+    //       for(int i = (4 + 2 + 3 + j + 10 + 4); i < 12; i++){
+    //           System.out.println((b - a) * i);
+    //       }
+    //     }
+    //     a = 4;
+    //     b = a + 2;
+    //     return a * b;
+    // }
 }

@@ -601,9 +601,13 @@ public class ConstantFolder
 		int endLoop = 0;
 		boolean beforeLoop = false;
 		boolean afterI = false;
+		boolean skip = false;
+		boolean skip1 = false;
+	  int pushBeforeLoop = 0;
 		// InstructionHandle is a wrapper for actual Instructions
 		for (InstructionHandle handle : instList.getInstructionHandles())
 		{
+			System.out.println("INST1: " + replaceInstructionIndex);
 			System.out.println(handle);
 			Instruction instruction = handle.getInstruction();
 			if(forhash.getList(counter)!=null)
@@ -614,7 +618,8 @@ public class ConstantFolder
 					beforeLoop = false;
 					replaceInstructionIndex = counter + 1;
 					afterI = false;
-
+					skip = false;
+					System.out.println("LOOOOOOOOOOOOOOOP___________ENDS");
 				}
 				else if(forhash.getList(counter).size() == indexes.size()+1)
 				{
@@ -622,7 +627,8 @@ public class ConstantFolder
 					startLoop = counter;
 					endLoop = startLoop;
 					beforeLoop = true;
-					replaceInstructionIndex = counter;
+					// replaceInstructionIndex = counter;
+					System.out.println("LOOOOOOOOOOOOOOOP___________STARTS");
 				}
 				indexes = forhash.getList(counter);
 				System.out.println("StartLoopIndex: " + startLoop);
@@ -666,6 +672,9 @@ public class ConstantFolder
 			else if(instruction instanceof ConstantPushInstruction) //gets value for SIPUSH, BIPUSH etc
 			{
 				ConstantPushInstruction constPush = (ConstantPushInstruction) instruction;
+				// if(beforeLoop) {
+				// 	pushBeforeLoop++;
+				// }
 				System.out.println("push= "+(constPush.getValue()));
 				temp1 = temp2;
 				temp2 = constPush.getValue();
@@ -678,6 +687,7 @@ public class ConstantFolder
 				System.out.println("storedINstruectino ------"+a.getIndex());
 				if(indexes.contains(a.getIndex())){
 					System.out.println("DONT TOUCH");
+
 					// counter++;
 				}
 				else {
@@ -691,15 +701,36 @@ public class ConstantFolder
 				System.out.println("load --------- "+loadInst.getIndex());
 				if(indexes.contains(loadInst.getIndex())){
 					System.out.println("DONT TOUCH 2");
+					skip = true;
+					temp1 = 0;
+					temp2 = 0;
+
 					if(!beforeLoop) {
 						afterI = true;
+					}
+					System.out.println("LOL: " + handle.getPrev().getPosition());
+					// LoadInstruction loadInst = (LoadInstruction)handle.getPrev().getInstruction()
+					if(handle.getPrev().getInstruction() instanceof StoreInstruction){
+						StoreInstruction a = (StoreInstruction) handle.getPrev().getInstruction();
+						if(indexes.contains(a.getIndex())) {
+							deleteTable.add(replaceInstructionIndex+1,counter - 2);
+							int size = deleteTable.getSize();
+							System.out.println("SPECIAL");
+							System.out.println(size);
+							System.out.println(deleteTable.getStart(size - 1));
+							System.out.println(deleteTable.getEnd(size - 1));
+					}
+					}
+					else {
 						deleteTable.add(replaceInstructionIndex+1,counter - 1);
 						int size = deleteTable.getSize();
 						System.out.println("SPECIAL");
 						System.out.println(size);
 						System.out.println(deleteTable.getStart(size - 1));
 						System.out.println(deleteTable.getEnd(size - 1));
-				 	}
+					}
+						replaceInstructionIndex+=2;
+
 					// counter++;
 				}
 				else {
@@ -710,6 +741,12 @@ public class ConstantFolder
 			}
 			else if((instruction instanceof IfInstruction)&&(temp1!=null)&&(temp2!=null)) {
 				System.out.println("if");
+				if(skip) {
+					skip = false;
+				}
+				if(pushBeforeLoop == 1) {
+					temp2 = 0;
+				}
 				if(beforeLoop) {
 					beforeLoop = false;
 					replaceInstructionIndex = counter + 1;
@@ -741,15 +778,29 @@ public class ConstantFolder
 			{
 				type = 3;
 			}
-			else if((instruction instanceof ArithmeticInstruction)&&(!afterI))
+			else if((instruction instanceof ArithmeticInstruction)&&(!skip))
 			{
 				System.out.println("arith");
+				System.out.println("WLQ: "+instruction.getName());
+				if(((instruction.getName().contains("mult"))||(instruction.getName().contains("div")))&&(skip1)){
+					System.out.println("Change to 1");
+					temp1 = 1;
+					skip1=false;
+				}
 				Number temp3 = temp2;
 				System.out.println(replaceInstructionIndex);
 				temp2 =	arithmeticMethod(handle, instruction, cpgen, instList, temp1, temp2, replaceInstructionIndex); //handle IADD, DADD, ISUB etc
 				temp1 = temp3;
 			}
+			else if((instruction instanceof ArithmeticInstruction)&&(skip)) {
+				skip = false;
+				skip1 = true;
+				replaceInstructionIndex++;
+			}
 			counter++;
+			if(beforeLoop) {
+				pushBeforeLoop++;
+			}
 		}
 		return deleteTable;
 	}
