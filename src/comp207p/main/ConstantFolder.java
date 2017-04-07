@@ -76,7 +76,6 @@ public class ConstantFolder
 
 		if((instruction instanceof IF_ICMPLE)||(instruction instanceof IFLE))
 		{
-			System.out.println(temp2.compareTo(temp1));
    		if(temp2.compareTo(temp1) == -1)
 			{
 				return true;
@@ -114,9 +113,11 @@ public class ConstantFolder
 		{
    		if(!temp2.equals(temp1))
 			{
+				System.out.println("\t Folding result: True");
 				return true;
 			}
 		}
+		System.out.println("\t Folding result: False");
 		return false;
 	}
 
@@ -237,8 +238,7 @@ public class ConstantFolder
 			type = 3;
 	  }
 		if((type == 0) || (type == 2)) {
-			System.out.println("\tType LDC: "+index);
-			System.out.println(instList.getInstructionHandles()[index]);
+			System.out.println("\tType: LDC");
 			if(cpgen.lookupFloat(arithNumber.floatValue())!=-1) {
 				instList.getInstructionHandles()[index].setInstruction(new LDC(cpgen.lookupFloat(arithNumber.floatValue())));
 			}
@@ -248,11 +248,9 @@ public class ConstantFolder
 			else {
 				instList.getInstructionHandles()[index].setInstruction(new LDC(cpgen.getSize() - 1));
 		  }
-			System.out.println(instList.getInstructionHandles()[index]);
 		}
 		else {
-			System.out.println("\tType LDC2_W: "+index);
-			System.out.println(instList.getInstructionHandles()[index]);
+			System.out.println("\tType: LDC2_W");
 			if(cpgen.lookupDouble(arithNumber.doubleValue())!=-1) {
 				instList.getInstructionHandles()[index].setInstruction(new LDC2_W(cpgen.lookupDouble(arithNumber.doubleValue())));
 			}
@@ -262,8 +260,6 @@ public class ConstantFolder
 			else {
 				instList.getInstructionHandles()[index].setInstruction(new LDC2_W(cpgen.getSize() - 1));
 		  }
-			// instList.getInstructionHandles()[index].setInstruction(new LDC2_W(cpgen.getSize() - 2));
-			System.out.println(instList.getInstructionHandles()[index]);
 		}
 		return arithNumber;
 	}
@@ -623,8 +619,9 @@ public class ConstantFolder
 		// InstructionHandle is a wrapper for actual Instructions
 		for (InstructionHandle handle : instList.getInstructionHandles())
 		{
-			System.out.println("Replace Instruction Index: " + replaceInstructionIndex);
+			System.out.println("\nHandle Position: " + handle.getPosition() + " [" + counter + "]");
 			System.out.println(handle);
+			System.out.println("Replace Instruction Index: " + replaceInstructionIndex);
 			Instruction instruction = handle.getInstruction();
 			if(forhash.getList(counter)!=null)
 			{
@@ -635,7 +632,8 @@ public class ConstantFolder
 					replaceInstructionIndex = counter + 1;
 					afterI = false;
 					skip = false;
-					System.out.println("For Loop Ends");
+					skip1 = false;
+					System.out.println("FOR LOOP ENDS");
 				}
 				else if(forhash.getList(counter).size() == indexes.size()+1)
 				{
@@ -644,30 +642,26 @@ public class ConstantFolder
 					endLoop = startLoop;
 					beforeLoop = true;
 					// replaceInstructionIndex = counter;
-					System.out.println("For Loop Starts");
+					System.out.println("FOR LOOP STARTS");
 				}
 				indexes = forhash.getList(counter);
-				System.out.println("StartLoopIndex: " + startLoop);
-				System.out.println("EndLoopIndex: " + endLoop);
-				System.out.println("Indexes: " + indexes);
 			}
 			else if(instruction instanceof LDC)
 			{
 				LDC l = (LDC) instruction;
-				System.out.println("LDC");
-				System.out.println(l.getValue(cpgen));
+				System.out.println("LDC - Constant Pool");
+				System.out.println("\tNew Value = " + l.getValue(cpgen));
 				temp1 = temp2;
 				temp2 = (int)l.getValue(cpgen);
-				System.out.println("temp1="+temp1+" 2 = "+temp2);
-				System.out.println(handle);
+				System.out.println("\tValue 1 = " + temp1 + "\n\tValue 2 = " + temp2);
 			}
 			else if(((instruction instanceof INVOKEVIRTUAL)||(instruction instanceof GETSTATIC)||(instruction instanceof ReturnInstruction))&&(!afterI)) {
 					deleteTable.add(replaceInstructionIndex+1,counter - 1);
 					int size = deleteTable.getSize();
 					System.out.println("Replacing Instruction");
 					System.out.println("\tDeleteTable Entry: " + size);
-					System.out.println("\t   Start: " + deleteTable.getStart(size - 1));
-					System.out.println("\t   End: " + deleteTable.getEnd(size - 1));
+					System.out.println("\t   Start: [" + deleteTable.getStart(size - 1) + "]");
+					System.out.println("\t   End: [" + deleteTable.getEnd(size - 1) + "]");
 					replaceInstructionIndex = counter + 1;
 			}
 			if(instruction instanceof IINC){
@@ -676,10 +670,11 @@ public class ConstantFolder
 			else if(handle.getInstruction() instanceof LDC2_W)
 			{
 				LDC2_W l = (LDC2_W) handle.getInstruction();
-				System.out.println("LDC2_W");
-				System.out.println(l.getValue(cpgen));
+				System.out.println("LDC2_W - Constant Pool");
+				System.out.println("\tNew Value = " + l.getValue(cpgen));
 				temp1 = temp2;
 				temp2 = (Number)l.getValue(cpgen);
+				System.out.println("\tValue 1 = " + temp1 + "\n\tValue 2 = " + temp2);
 			}
 			else if(instruction instanceof ConstantPushInstruction) //gets value for SIPUSH, BIPUSH etc
 			{
@@ -687,20 +682,17 @@ public class ConstantFolder
 				// if(beforeLoop) {
 				// 	pushBeforeLoop++;
 				// }
-				System.out.println("push= "+(constPush.getValue()));
+				System.out.println("Push Instruction\n\tNew Value = " + constPush.getValue());
 				temp1 = temp2;
 				temp2 = constPush.getValue();
-				System.out.println("temp1 = "+temp1+"temp2 = "+temp2);
+				System.out.println("\tValue 1 = " + temp1 + "\n\tValue 2 = " + temp2);
 
 			}else if(instruction instanceof StoreInstruction)
 			{
 				StoreInstruction a = (StoreInstruction) instruction;
-
-				System.out.println("storedINstruectino ------"+a.getIndex());
+				System.out.println("Stored in LVT Index: " + a.getIndex());
 				if(indexes.contains(a.getIndex())){
-					System.out.println("DONT TOUCH");
-
-					// counter++;
+					System.out.println("\tDon't Touch - Iterator Variable");
 				}
 				else {
 					lvt.addVariable(a.getIndex(),temp2);
@@ -710,9 +702,9 @@ public class ConstantFolder
 			{
 				LoadInstruction loadInst = (LoadInstruction) instruction;
 
-				System.out.println("load --------- "+loadInst.getIndex());
+				System.out.println("Loaded from LVT Index: " + loadInst.getIndex());
 				if(indexes.contains(loadInst.getIndex())){
-					System.out.println("DONT TOUCH 2");
+					System.out.println("\tDon't Touch - Iterator Variable");
 					skip = true;
 					temp1 = 0;
 					temp2 = 0;
@@ -720,26 +712,24 @@ public class ConstantFolder
 					if(!beforeLoop) {
 						afterI = true;
 					}
-					System.out.println("LOL: " + handle.getPrev().getPosition());
-					// LoadInstruction loadInst = (LoadInstruction)handle.getPrev().getInstruction()
 					if(handle.getPrev().getInstruction() instanceof StoreInstruction){
 						StoreInstruction a = (StoreInstruction) handle.getPrev().getInstruction();
 						if(indexes.contains(a.getIndex())) {
 							deleteTable.add(replaceInstructionIndex+1,counter - 2);
 							int size = deleteTable.getSize();
-							System.out.println("SPECIAL");
-							System.out.println(size);
-							System.out.println(deleteTable.getStart(size - 1));
-							System.out.println(deleteTable.getEnd(size - 1));
+							System.out.println("Replacing Instruction");
+							System.out.println("\tDeleteTable Entry: " + size);
+							System.out.println("\t   Start: [" + deleteTable.getStart(size - 1) + "]");
+							System.out.println("\t   End: [" + deleteTable.getEnd(size - 1) + "]");
 					}
 					}
 					else {
-						deleteTable.add(replaceInstructionIndex+1,counter - 1);
+						deleteTable.add(replaceInstructionIndex + 1, counter - 1);
 						int size = deleteTable.getSize();
-						System.out.println("SPECIAL");
-						System.out.println(size);
-						System.out.println(deleteTable.getStart(size - 1));
-						System.out.println(deleteTable.getEnd(size - 1));
+						System.out.println("Replacing Instruction");
+						System.out.println("\tDeleteTable Entry: " + size);
+						System.out.println("\t   Start: [" + deleteTable.getStart(size - 1) + "]");
+						System.out.println("\t   End: [" + deleteTable.getEnd(size - 1) + "]");
 					}
 						replaceInstructionIndex+=2;
 
@@ -748,11 +738,11 @@ public class ConstantFolder
 				else {
 					temp1 = temp2;
 					temp2 = lvt.getVariable(loadInst.getIndex());
-					System.out.println("temp1 = " + temp1+" "+temp2);
+					System.out.println("\tNew Value = " + lvt.getVariable(loadInst.getIndex()));
+					System.out.println("\tValue 1 = " + temp1 + "\n\tValue 2 = " + temp2);
 				}
 			}
 			else if((instruction instanceof IfInstruction)&&(temp1!=null)&&(temp2!=null)) {
-				System.out.println("if");
 				if(skip) {
 					skip = false;
 				}
@@ -762,18 +752,14 @@ public class ConstantFolder
 				if(beforeLoop) {
 					beforeLoop = false;
 					replaceInstructionIndex = counter + 1;
-					System.out.println("If in loop condition: " + replaceInstructionIndex);
 				}
 				else {
 					boolean answer = condition(handle, instruction, cpgen, instList, temp1, temp2, type);
-					System.out.println(answer);
 					int a = 0;
 					if(answer == true) {
 						a = 1;
 					}
 					cpgen.addInteger(a);
-					System.out.println("INST: "+replaceInstructionIndex);
-					System.out.println(instList.getInstructionHandles()[replaceInstructionIndex]);
 					// else if(cgen.lookupInteger(a)!=-1){
 					// 	instList.getInstructionHandles()[index].setInstruction(new LDC(cpgen.lookupInteger(a)));
 					// }
@@ -787,7 +773,6 @@ public class ConstantFolder
 						instList.getInstructionHandles()[replaceInstructionIndex].setInstruction(new LDC(cpgen.getSize() - 1));
 				  }
 					// instList.getInstructionHandles()[replaceInstructionIndex].setInstruction(new LDC(cpgen.getSize() - 1));
-					System.out.println(instList.getInstructionHandles()[replaceInstructionIndex]);
 				}
 
 			}
@@ -804,15 +789,11 @@ public class ConstantFolder
 			}
 			else if((instruction instanceof ArithmeticInstruction)&&(!skip))
 			{
-				System.out.println("arith");
-				System.out.println("WLQ: "+instruction.getName());
-				if(((instruction.getName().contains("mult"))||(instruction.getName().contains("div")))&&(skip1)){
-					System.out.println("Change to 1");
+				if(((instruction.getName().contains("mul"))||(instruction.getName().contains("div")))&&(skip1)){
 					temp1 = 1;
-					skip1=false;
+					skip1 = false;
 				}
 				Number temp3 = temp2;
-				System.out.println(replaceInstructionIndex);
 				temp2 =	arithmeticMethod(handle, instruction, cpgen, instList, temp1, temp2, replaceInstructionIndex); //handle IADD, DADD, ISUB etc
 				temp1 = temp3;
 			}
