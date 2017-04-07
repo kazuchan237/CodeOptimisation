@@ -606,7 +606,7 @@ public class ConstantFolder
 		// InstructionHandle is a wrapper for actual Instructions
 		for (InstructionHandle handle : instList.getInstructionHandles())
 		{
-			System.out.println("INST1: " + replaceInstructionIndex);
+			System.out.println("Replace Instruction Index: " + replaceInstructionIndex);
 			System.out.println(handle);
 			Instruction instruction = handle.getInstruction();
 			if(forhash.getList(counter)!=null)
@@ -618,7 +618,7 @@ public class ConstantFolder
 					replaceInstructionIndex = counter + 1;
 					afterI = false;
 					skip = false;
-					System.out.println("LOOOOOOOOOOOOOOOP___________ENDS");
+					System.out.println("For Loop Ends");
 				}
 				else if(forhash.getList(counter).size() == indexes.size()+1)
 				{
@@ -627,14 +627,12 @@ public class ConstantFolder
 					endLoop = startLoop;
 					beforeLoop = true;
 					// replaceInstructionIndex = counter;
-					System.out.println("LOOOOOOOOOOOOOOOP___________STARTS");
+					System.out.println("For Loop Starts");
 				}
 				indexes = forhash.getList(counter);
 				System.out.println("StartLoopIndex: " + startLoop);
 				System.out.println("EndLoopIndex: " + endLoop);
 				System.out.println("Indexes: " + indexes);
-				System.out.println("INST: "+replaceInstructionIndex);
-
 			}
 			else if(instruction instanceof LDC)
 			{
@@ -649,16 +647,14 @@ public class ConstantFolder
 			else if(((instruction instanceof INVOKEVIRTUAL)||(instruction instanceof GETSTATIC)||(instruction instanceof ReturnInstruction))&&(!afterI)) {
 					deleteTable.add(replaceInstructionIndex+1,counter - 1);
 					int size = deleteTable.getSize();
-					System.out.println("SPECIAL");
-					System.out.println(size);
-					System.out.println(deleteTable.getStart(size-1));
-					System.out.println(deleteTable.getEnd(size-1));
+					System.out.println("Replacing Instruction");
+					System.out.println("\tDeleteTable Entry: " + size);
+					System.out.println("\t   Start: " + deleteTable.getStart(size - 1));
+					System.out.println("\t   End: " + deleteTable.getEnd(size - 1));
 					replaceInstructionIndex = counter + 1;
-					System.out.println("INST: "+replaceInstructionIndex);
 			}
 			if(instruction instanceof IINC){
 				replaceInstructionIndex = counter + 1;
-				System.out.println("INST: "+replaceInstructionIndex);
 			}
 			else if(handle.getInstruction() instanceof LDC2_W)
 			{
@@ -819,7 +815,7 @@ public class ConstantFolder
 	  		InstructionHandle instructionHandle = instList.getInstructionHandles()[y];
 				if (instructionHandle.getInstruction() instanceof IfInstruction || instructionHandle.getInstruction() instanceof GotoInstruction)
 				try{
-					System.out.println("\tRemoved: " + instructionHandle);
+					System.out.println("\tRemoved: [" + y + "] " + instructionHandle);
 					instList.delete(instructionHandle);
 					deleteTable.deleteShift(y);
 				}
@@ -841,7 +837,7 @@ public class ConstantFolder
 	    {
 	  		InstructionHandle instruction = instList.getInstructionHandles()[y];
 				try{
-					System.out.println("\tRemoved: " + instruction);
+					System.out.println("\tRemoved: [" + y + "] " + instruction);
 					instList.delete(instruction);
 				}
 				catch(TargetLostException e)
