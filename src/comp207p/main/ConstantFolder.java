@@ -449,7 +449,7 @@ public class ConstantFolder
 			}
 			public void printForlpHash()
 			{
-				System.out.println("HashMap");
+				System.out.println("\nHashMap");
 				for(Integer key: forloophash.keySet())
 				{
 					System.out.print("\tKey -> " + key + " | Value -> ");
@@ -495,7 +495,7 @@ public class ConstantFolder
 
 		public ForLoopHash hashForLps(ForLoops flops, InstructionList instList)
 		{
-			System.out.println("HashTable -> HashMap");
+			System.out.println("\nHashTable -> HashMap");
 			ForLoops forloops = flops;
 			ForLoopHash forhash = new ForLoopHash(flops);
 			for(int[] a : forloops.flps)
@@ -506,17 +506,18 @@ public class ConstantFolder
 				{
 					if(forhash.keyExists(i))
 					{
-						System.out.println("Key Exists - " + i);
+						System.out.print("Key Exists - " + i);
 						ArrayList<Integer> loadIndexes = forhash.getList(i);
 						if(loadIndexes.get(0) == -1)
 						{
-							//System.out.println("Empty (-1)");
+							System.out.println(" - Empty");
 							loadIndexes.add(a[2]);
 							loadIndexes.remove(0);
-							//System.out.println(loadIndexes.get(0));
+							System.out.println("\tAdded Reference: " + loadIndexes.get(0));
 						}else
 						{
 							loadIndexes.add(a[2]);
+							System.out.println("\tAdded Reference: " + loadIndexes.get(0));
 						}
 						forhash.addHash(i,loadIndexes);
 					}
@@ -808,6 +809,7 @@ public class ConstantFolder
 		System.out.println("\n-------------------- Third Phase --------------------");
 
 		//First pass-through replacing gotos and ifs
+		System.out.println("Removing BranchInstructions");
 		for (int x = deleteTable.getSize() - 1; x >= 0; x--)
 	  {
 	    int start = deleteTable.getStart(x);
@@ -817,7 +819,7 @@ public class ConstantFolder
 	  		InstructionHandle instructionHandle = instList.getInstructionHandles()[y];
 				if (instructionHandle.getInstruction() instanceof IfInstruction || instructionHandle.getInstruction() instanceof GotoInstruction)
 				try{
-					System.out.println("REMOVED: " + instructionHandle);
+					System.out.println("\tRemoved: " + instructionHandle);
 					instList.delete(instructionHandle);
 					deleteTable.deleteShift(y);
 				}
@@ -830,6 +832,7 @@ public class ConstantFolder
 
 		//Second pass-through delete
 	  //For each entry in the deleteTable starting at the end
+		System.out.println("Removing Other Instructions");
 	  for (int x = deleteTable.getSize() - 1; x >= 0; x--)
 	  {
 	    int start = deleteTable.getStart(x);
@@ -838,7 +841,7 @@ public class ConstantFolder
 	    {
 	  		InstructionHandle instruction = instList.getInstructionHandles()[y];
 				try{
-					System.out.println("REMOVED: " + instruction);
+					System.out.println("\tRemoved: " + instruction);
 					instList.delete(instruction);
 				}
 				catch(TargetLostException e)
@@ -896,7 +899,7 @@ public class ConstantFolder
 			"addHash", "keyExists", "setEnd", "setStart", "getEnd", "getStart",
 			"recomputeSets", "removeJump", "addJump", "getJumps", "add", "checkCode",
 			"jumpsContaining", "destinationsContain", "getValueAtPosition",
-			"getVariable", "setValueAtPosition"
+			"getVariable", "setValueAtPosition", "variableValueAtPosition"
 		};
 		for (int x = 0; x < filter.length; x++)
 		{
