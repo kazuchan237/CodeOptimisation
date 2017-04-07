@@ -368,7 +368,7 @@ public class ConstantFolder
 				}
 			}
 			int count = 1;
-			for(int j = temp-1; j>=0; j--)
+			for(int j = temp - 1 ; j >= 0; j--)
 			{
 				InstructionHandle handle = handles[j];
 				System.out.println(handle);
@@ -411,10 +411,10 @@ public class ConstantFolder
 					GotoInstruction goTo = (GotoInstruction) instruction;
 					Integer target = goTo.getTarget().getPosition();
 					Integer end = handle.getPosition();
-					if(target<end)
+					if(target < end)
 					{
-						int start = getForLoopStart(instList,target);
-						int loadIndex = getLocalVariableIndex(instList,target);
+						int start = getForLoopStart(instList, target);
+						int loadIndex = getLocalVariableIndex(instList, target);
  						System.out.println("what is localindesx"+loadIndex);
 						System.out.println("FirstCheck---------FOR LOOOOOOOOOOOOOOOP___________--------*******************");
 						System.out.println("start = "+start);
@@ -697,15 +697,15 @@ public class ConstantFolder
 						int size = deleteTable.getSize();
 						System.out.println("SPECIAL");
 						System.out.println(size);
-						System.out.println(deleteTable.getStart(size-1));
-						System.out.println(deleteTable.getEnd(size-1));
+						System.out.println(deleteTable.getStart(size - 1));
+						System.out.println(deleteTable.getEnd(size - 1));
 				 	}
 					// counter++;
 				}
 				else {
 					temp1 = temp2;
 					temp2 = lvt.getVariable(loadInst.getIndex());
-					System.out.println("temp1 = "+temp1+" "+temp2);
+					System.out.println("temp1 = " + temp1+" "+temp2);
 				}
 			}
 			else if((instruction instanceof IfInstruction)&&(temp1!=null)&&(temp2!=null)) {
