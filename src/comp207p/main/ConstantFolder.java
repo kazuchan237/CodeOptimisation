@@ -286,9 +286,8 @@ public class ConstantFolder
 	{
 		ArrayList<int[]> flps = new ArrayList<int[]>();
 		// private static ArrayList<Integer[]> flps = new ArrayList<Integer[]>();
-		public ForLoops()
-		{
-		}
+		public ForLoops() {}
+
 		public void addForLoop(int start, int end, int loadIndex)
 		{
 			int[] a = new int[3];
@@ -310,237 +309,194 @@ public class ConstantFolder
 			int[] a;
 			for(int j = 0; j<getSize(); j++)
 			{
-					a = flps.get(0);
-					// System.out.println(a[0]);
-					// System.out.println(a[1]);
-					// System.out.println(a[2]);
+				a = flps.get(0);
 			}
 		}
 		public boolean checkinForloop(int value) // checks if instruction index is inside the for loop
 		{
-					int[] a;
-					int start;
-					int end;
-					for(int j = 0; j<this.getSize(); j++)
-					{
-						a = flps.get(j);
-					start = a[0];
-					end = a[1];
-					if((value >= start) && (value <= end))
-					{
-						return true;
-					}
+			int[] a;
+			int start;
+			int end;
+			for(int j = 0; j<this.getSize(); j++)
+			{
+				a = flps.get(j);
+				start = a[0];
+				end = a[1];
+				if((value >= start) && (value <= end))
+				{
+					return true;
 				}
-				return false;
 			}
+			return false;
+		}
 	}
 
-		private int getLocalVariableIndex(InstructionList instList, int start)
+	private int getLocalVariableIndex(InstructionList instList, int start)
+	{
+		for(InstructionHandle handle : instList.getInstructionHandles())
 		{
-			for(InstructionHandle handle : instList.getInstructionHandles())
+			Instruction instruction = handle.getInstruction();
+			if(handle.getPosition() == start)
 			{
-				Instruction instruction = handle.getInstruction();
-				if(handle.getPosition() == start)
+				LoadInstruction loadInst = (LoadInstruction) instruction;
+				int loadIndex = loadInst.getIndex();
+				return loadIndex;
+			}
+		}
+		return -1;
+	}
+
+	private int getHandleIndex(InstructionList instList, int index)
+	{
+		InstructionHandle[] handles = instList.getInstructionHandles();
+		for(int i = 0; i<handles.length; i++)
+		{
+			if(handles[i].getPosition() == index)
+			{
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	private ForLoops firstMethod(ClassGen cgen, ConstantPoolGen cpgen, Method method)
+	{
+		System.out.println("-------------------- First Phase --------------------");
+		Code methodCode = method.getCode();
+		InstructionList instList = new InstructionList(methodCode.getCode());
+		MethodGen methodGen = new MethodGen(method.getAccessFlags(), method.getReturnType(), method.getArgumentTypes(), null, method.getName(), cgen.getClassName(), instList, cpgen);
+		ForLoops forloops = new ForLoops();
+
+		for(InstructionHandle handle : instList.getInstructionHandles())
+		{
+			Instruction instruction = handle.getInstruction();
+			if(instruction instanceof GotoInstruction)
+			{
+				System.out.println("GoTo Found");
+				GotoInstruction goTo = (GotoInstruction) instruction;
+				Integer target = goTo.getTarget().getPosition();
+				Integer end = handle.getPosition();
+				if(target < end)
 				{
-					LoadInstruction loadInst = (LoadInstruction) instruction;
-					int loadIndex = loadInst.getIndex();
-					return loadIndex;
+					int start = goTo.getTarget().getPrev().getPosition();
+					int loadIndex = getLocalVariableIndex(instList, target);
+					System.out.println("For Loop Found");
+					System.out.println("\tLocal Variabl Index: " + loadIndex);
+					System.out.println("\tStart = " + start);
+					System.out.println("\tEnd = " + end);
+					forloops.addForLoop(start, end, loadIndex);
 				}
 			}
-			return -1;
 		}
+		return forloops;
+	}
 
-		private int getHandleIndex(InstructionList instList, int index)
+
+	private class ForLoopHash
+	{
+		private HashMap<Integer, ArrayList<Integer>> forloophash;
+
+		public ForLoopHash(ForLoops flops)
 		{
-			InstructionHandle[] handles = instList.getInstructionHandles();
-			for(int i = 0; i<handles.length; i++)
+			forloophash = new HashMap<Integer, ArrayList<Integer>>();
+			ArrayList<int[]> flps = flops.flps;
+			for(int[] a : flps)
 			{
-				if(handles[i].getPosition() == index)
-				{
-					return i;
-				}
+				ArrayList<Integer> temp1 = new ArrayList<Integer>();
+				ArrayList<Integer> temp2 = new ArrayList<Integer>();
+				temp1.add(-1);
+				temp2.add(-1);
+				forloophash.put(a[0],temp1);
+				forloophash.put(a[1],temp2);
 			}
-			return -1;
 		}
 
-		// private int getForLoopStart(InstructionList instList, int start)
-		// {
-		// 	InstructionHandle[] handles = instList.getInstructionHandles();
-		// 	System.out.println("startindex for getForLoopStart"+start);
-		// 	int temp= 0;
-		// 	for(int i = 0; i<handles.length; i++)
-		// 	{
-		// 		if(handles[i].getPosition() == start)
-		// 		{
-		// 			temp = i;
-		// 			System.out.println("found ");
-		// 			System.out.println(i);
-		// 			break;
-		// 		}
-		// 	}
-		// 	int count = 1;
-		// 	for(int j = temp - 1 ; j >= 0; j--)
-		// 	{
-		// 		InstructionHandle handle = handles[j];
-		// 		System.out.println(handle);
-		// 		Instruction a = handle.getInstruction();
-		// 		if(a instanceof ConstantPushInstruction || a instanceof LDC || a instanceof LDC2_W || a instanceof LoadInstruction)
-		// 		{
-		// 			count = count -1;
-		// 			if(count == 0)
-		// 			{
-		// 				System.out.println("hello");
-		// 				System.out.println(handle.getPosition());
-		// 				return handle.getPosition();
-		// 			}
-		// 		}
-		//
-		// 		if(a instanceof ArithmeticInstruction)
-		// 		{
-		// 			count = 2;
-		// 		}
-		//
-		// 	}
-		//
-		// 	return 0;
-		// }
-
-		private ForLoops firstMethod(ClassGen cgen, ConstantPoolGen cpgen, Method method)
+		public ForLoopHash(HashMap<Integer, ArrayList<Integer>> ab)
 		{
-			System.out.println("-------------------- First Phase --------------------");
-			Code methodCode = method.getCode();
-			InstructionList instList = new InstructionList(methodCode.getCode());
-			MethodGen methodGen = new MethodGen(method.getAccessFlags(), method.getReturnType(), method.getArgumentTypes(), null, method.getName(), cgen.getClassName(), instList, cpgen);
-			ForLoops forloops = new ForLoops();
+			this.forloophash = ab;
+		}
 
-			for(InstructionHandle handle : instList.getInstructionHandles())
+		public void printForlpHash()
+		{
+			System.out.println("\nHashMap");
+			for(Integer key: forloophash.keySet())
 			{
-				Instruction instruction = handle.getInstruction();
-				if(instruction instanceof GotoInstruction)
+				System.out.print("\tKey -> " + key + " | Value -> ");
+				for(Integer temp : forloophash.get(key))
 				{
-					System.out.println("GoTo Found");
-					GotoInstruction goTo = (GotoInstruction) instruction;
-					Integer target = goTo.getTarget().getPosition();
-					Integer end = handle.getPosition();
-					if(target < end)
+					if (temp == -1)
 					{
-						int start = goTo.getTarget().getPrev().getPosition();
-						int loadIndex = getLocalVariableIndex(instList, target);
-						System.out.println("For Loop Found");
- 						System.out.println("\tLocal Variabl Index: " + loadIndex);
-						System.out.println("\tStart = " + start);
-						System.out.println("\tEnd = " + end);
-						forloops.addForLoop(start, end, loadIndex);
- 						//forloops.printFor();
+						System.out.print("Empty");
+						break;
 					}
+					System.out.print(temp + " ");
 				}
-			}
-			return forloops;
-		}
-
-
-		private class ForLoopHash
-		{
-			private HashMap<Integer, ArrayList<Integer>> forloophash;
-			public ForLoopHash(ForLoops flops)
-			{
-				forloophash = new HashMap<Integer, ArrayList<Integer>>();
-				ArrayList<int[]> flps = flops.flps;
-				for(int[] a : flps)
-				{
-					ArrayList<Integer> temp1 = new ArrayList<Integer>();
-					ArrayList<Integer> temp2 = new ArrayList<Integer>();
-					temp1.add(-1);
-					temp2.add(-1);
-					forloophash.put(a[0],temp1);
-					forloophash.put(a[1],temp2);
-				}
-			}
-			public ForLoopHash(HashMap<Integer, ArrayList<Integer>> ab)
-			{
-				this.forloophash = ab;
-			}
-			public void printForlpHash()
-			{
-				System.out.println("\nHashMap");
-				for(Integer key: forloophash.keySet())
-				{
-					System.out.print("\tKey -> " + key + " | Value -> ");
-					for(Integer temp : forloophash.get(key))
-					{
-						if (temp == -1)
-						{
-							System.out.print("Empty");
-							break;
-						}
-						System.out.print(temp + " ");
-					}
-					System.out.println();
-				}
-			}
-			public boolean keyExists(Integer key)
-			{
-				return forloophash.containsKey(key);
-			}
-			public void addHash(Integer key, ArrayList<Integer> list)
-			{
-				forloophash.put(key,list);
-			}
-			public ArrayList<Integer> getList(Integer key)
-			{
-				return forloophash.get(key);
-			}
-
-			public HashMap<Integer, ArrayList<Integer>> replaceHash(InstructionList instList)
-			{
-				HashMap<Integer, ArrayList<Integer>> newHash = new HashMap<Integer, ArrayList<Integer>>();
-				for(Integer key: forloophash.keySet())
-				{
-					ArrayList<Integer> loadIndex = forloophash.get(key);
-					Integer newKey = getHandleIndex(instList,key);
-					newHash.put(newKey,loadIndex);
-					//System.out.println(key);
-					//System.out.println(newKey);
-				}
-				return newHash;
+				System.out.println();
 			}
 		}
 
-		public ForLoopHash hashForLps(ForLoops flops, InstructionList instList)
+		public boolean keyExists(Integer key)
 		{
-			System.out.println("\nHashTable -> HashMap");
-			ForLoops forloops = flops;
-			ForLoopHash forhash = new ForLoopHash(flops);
-			for(int[] a : forloops.flps)
-			{
-				Integer temp1 = a[0];
-				Integer temp2 = a[1];
-				for(int i = temp1; i< temp2; i++)
-				{
-					if(forhash.keyExists(i))
-					{
-						System.out.print("Key Exists - " + i);
-						ArrayList<Integer> loadIndexes = forhash.getList(i);
-						if(loadIndexes.get(0) == -1)
-						{
-							System.out.println(" - Empty");
-							loadIndexes.add(a[2]);
-							loadIndexes.remove(0);
-							System.out.println("\tAdded Reference: " + loadIndexes.get(0));
-						}else
-						{
-							loadIndexes.add(a[2]);
-							System.out.println("\n\tAdded Reference: " + a[2]);
-						}
-						forhash.addHash(i,loadIndexes);
-					}
-				}
-			}
+			return forloophash.containsKey(key);
+		}
 
-			forhash.printForlpHash();
-			ForLoopHash newHash = new ForLoopHash(forhash.replaceHash(instList));
+		public void addHash(Integer key, ArrayList<Integer> list)
+		{
+			forloophash.put(key,list);
+		}
+
+		public ArrayList<Integer> getList(Integer key)
+		{
+			return forloophash.get(key);
+		}
+
+		public HashMap<Integer, ArrayList<Integer>> replaceHash(InstructionList instList)
+		{
+			HashMap<Integer, ArrayList<Integer>> newHash = new HashMap<Integer, ArrayList<Integer>>();
+			for(Integer key: forloophash.keySet())
+			{
+				ArrayList<Integer> loadIndex = forloophash.get(key);
+				Integer newKey = getHandleIndex(instList,key);
+				newHash.put(newKey,loadIndex);
+			}
 			return newHash;
 		}
+	}
+
+	public ForLoopHash hashForLps(ForLoops flops, InstructionList instList)
+	{
+		System.out.println("\nHashTable -> HashMap");
+		ForLoops forloops = flops;
+		ForLoopHash forhash = new ForLoopHash(flops);
+		for(int[] a : forloops.flps)
+		{
+			Integer temp1 = a[0];
+			Integer temp2 = a[1];
+			for(int i = temp1; i< temp2; i++)
+			{
+				if(forhash.keyExists(i))
+				{
+					System.out.print("Key Exists - " + i);
+					ArrayList<Integer> loadIndexes = forhash.getList(i);
+					if(loadIndexes.get(0) == -1)
+					{
+						System.out.println(" - Empty");
+						loadIndexes.add(a[2]);
+						loadIndexes.remove(0);
+						System.out.println("\tAdded Reference: " + loadIndexes.get(0));
+					}else
+					{
+						loadIndexes.add(a[2]);
+						System.out.println("\n\tAdded Reference: " + a[2]);
+					}
+					forhash.addHash(i,loadIndexes);
+				}
+			}
+		}
+		forhash.printForlpHash();
+		ForLoopHash newHash = new ForLoopHash(forhash.replaceHash(instList));
+		return newHash;
+	}
 
 	private static class DeleteTable {
 		private ArrayList<ArrayList<Integer>> delete = new ArrayList<ArrayList<Integer>>();
@@ -588,6 +544,27 @@ public class ConstantFolder
 					setStart(x, getStart(x) - 1);
 				if (getEnd(x) > deleteIndex)
 					setEnd(x, getEnd(x) - 1);
+			}
+		}
+
+		public void printDeleteTable()
+		{
+			System.out.println("DeleteTable");
+			for (int x = 0; x < getSize(); x++)
+			{
+				System.out.println("\t" + x + ": [" + getStart(x) + "] -> [" + getEnd(x) + "]");
+			}
+			System.out.println();
+		}
+
+		public void cleanUpTable()
+		{
+			for (int x = getSize() - 1; x >= 0; x--)
+			{
+				if (getStart(x) > getEnd(x))
+				{
+					delete.remove(x);
+				}
 			}
 		}
 	}
@@ -679,9 +656,6 @@ public class ConstantFolder
 			else if(instruction instanceof ConstantPushInstruction) //gets value for SIPUSH, BIPUSH etc
 			{
 				ConstantPushInstruction constPush = (ConstantPushInstruction) instruction;
-				// if(beforeLoop) {
-				// 	pushBeforeLoop++;
-				// }
 				System.out.println("Push Instruction\n\tNew Value = " + constPush.getValue());
 				temp1 = temp2;
 				temp2 = constPush.getValue();
@@ -760,19 +734,12 @@ public class ConstantFolder
 						a = 1;
 					}
 					cpgen.addInteger(a);
-					// else if(cgen.lookupInteger(a)!=-1){
-					// 	instList.getInstructionHandles()[index].setInstruction(new LDC(cpgen.lookupInteger(a)));
-					// }
-					// else {
-					// 	instList.getInstructionHandles()[index].setInstruction(new LDC(cpgen.getSize() - 1));
-				  // }
 					if(cpgen.lookupInteger(a)!=-1){
 						instList.getInstructionHandles()[replaceInstructionIndex].setInstruction(new LDC(cpgen.lookupInteger(a)));
 					}
 					else {
 						instList.getInstructionHandles()[replaceInstructionIndex].setInstruction(new LDC(cpgen.getSize() - 1));
 				  }
-					// instList.getInstructionHandles()[replaceInstructionIndex].setInstruction(new LDC(cpgen.getSize() - 1));
 				}
 
 			}
@@ -814,6 +781,7 @@ public class ConstantFolder
 	{
 		System.out.println("\n-------------------- Third Phase --------------------");
 
+		deleteTable.printDeleteTable();
 		//First pass-through replacing gotos and ifs
 		System.out.println("Removing BranchInstructions");
 		for (int x = deleteTable.getSize() - 1; x >= 0; x--)
@@ -881,6 +849,7 @@ public class ConstantFolder
 		LocalVariables lvt = new LocalVariables();
 		int type = 0;
 		DeleteTable deleteTable = secondMethod(cpgen, instList, forhash);
+		deleteTable.cleanUpTable();
 
 		thirdMethod(instList, cpgen, deleteTable);
 
@@ -905,7 +874,8 @@ public class ConstantFolder
 			"addHash", "keyExists", "setEnd", "setStart", "getEnd", "getStart",
 			"recomputeSets", "removeJump", "addJump", "getJumps", "add", "checkCode",
 			"jumpsContaining", "destinationsContain", "getValueAtPosition",
-			"getVariable", "setValueAtPosition", "variableValueAtPosition"
+			"getVariable", "setValueAtPosition", "variableValueAtPosition",
+			"printDeleteTable","cleanUpTable"
 		};
 		for (int x = 0; x < filter.length; x++)
 		{
